@@ -6,7 +6,7 @@ It takes in three arguments [`t` a function that shall be executed to translate 
 ## Installation
 
 ```javascript
-npm install [--save] passport-template-mixins;
+npm install [--save] hmpo-template-mixins;
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ var fields = require('./routes/renew-your-passport/fields');
 
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/views'));
-app.use(require('passport-template-mixins')(i18n.t, fields, { sharedTranslationsKey: 'passport.renew' }));
+app.use(require('hmpo-template-mixins')(i18n.t, fields, { sharedTranslationsKey: 'passport.renew' }));
 
 app.use(function (req, res) {
     // NOTE: res.locals.partials has been set.
