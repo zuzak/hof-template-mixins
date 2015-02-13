@@ -1,0 +1,38 @@
+{
+  "name": "hmpo-template-mixins",
+  "version": "0.0.1",
+  "description": "A middleware that exposes a series of Mustache mixins on res.locals to ease usage of forms, translations, and some general needs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint",
+    "lint": "./node_modules/.bin/eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UKHomeOffice/passport-template-mixins.git"
+  },
+  "keywords": [
+    "middleware",
+    "express",
+    "partials",
+    "hogan",
+    "mustache",
+    "form",
+    "translations",
+    "general"
+  ],
+  "author": "Seb Insua",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UKHomeOffice/passport-template-mixins/issues"
+  },
+  "homepage": "https://github.com/UKHomeOffice/passport-template-mixins",
+  "dependencies": {
+    "hogan.js": "^3.0.2",
+    "moment": "^2.9.0",
+    "underscore": "^1.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^0.14.1"
+  }
+}
