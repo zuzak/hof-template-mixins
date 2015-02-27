@@ -1,7 +1,7 @@
 <div id="{{key}}-group" class="form-group{{#display}} {{display}}{{/display}}{{#error}} validation-error{{/error}}">
     {{#options}}
         <label class="block-label" for="{{key}}-{{value}}">
-            <input type="radio" name="{{key}}" id="{{key}}-{{value}}" value="{{value}}" aria-required="true"{{#selected}} checked="checked"{{/selected}}>
+            <input type="radio" name="{{key}}" id="{{key}}-{{value}}" value="{{value}}" aria-required="true"{{#data-toggle}} data-toggle="{{data-toggle}}"{{/data-toggle}}{{#selected}} checked="checked"{{/selected}}>
             {{{label}}}
         </label>
     {{/options}}
