@@ -71,6 +71,88 @@ describe('Template Mixins', function () {
 
     });
 
+    describe('input-date', function () {
+
+        beforeEach(function () {
+            middleware = mixins(translate, {});
+        });
+
+        it('adds a function to res.locals', function () {
+            middleware(req, res, next);
+            res.locals['input-date'].should.be.a('function');
+        });
+
+        it('returns a function', function () {
+            middleware(req, res, next);
+            res.locals['input-date']().should.be.a('function');
+        });
+
+        it('renders thrice if the field is not marked as inexact', function () {
+            middleware(req, res, next);
+            res.locals['input-date']().call(res.locals, 'field-name');
+            render.should.have.been.calledThrice;
+        });
+
+        it('renders twice if the field is marked as inexact', function () {
+            var middlewareWithFieldNameMarkedAsInexact = mixins(translate, {
+                'field-name': {
+                    'inexact': true
+                }
+            });
+            middlewareWithFieldNameMarkedAsInexact(req, res, next);
+            res.locals['input-date']().call(res.locals, 'field-name');
+            render.should.have.been.calledTwice;
+        });
+
+        it('looks up field label', function () {
+            middleware(req, res, next);
+            res.locals['input-date']().call(res.locals, 'field-name');
+
+            render.called;
+
+            var dayCall = render.getCall(0),
+                monthCall = render.getCall(1),
+                yearCall = render.getCall(2);
+
+            dayCall.should.have.been.calledWith(sinon.match({
+              label: 'fields.field-name-day.label'
+            }));
+
+            monthCall.should.have.been.calledWith(sinon.match({
+              label: 'fields.field-name-month.label'
+            }));
+
+            yearCall.should.have.been.calledWith(sinon.match({
+              label: 'fields.field-name-year.label'
+            }));
+        });
+
+        it('prefixes translation lookup with namespace if provided', function () {
+            middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+            middleware(req, res, next);
+            res.locals['input-date']().call(res.locals, 'field-name');
+
+            render.called;
+
+            var dayCall = render.getCall(0),
+                monthCall = render.getCall(1),
+                yearCall = render.getCall(2);
+
+            dayCall.should.have.been.calledWith(sinon.match({
+              label: 'name.space.fields.field-name-day.label'
+            }));
+
+            monthCall.should.have.been.calledWith(sinon.match({
+              label: 'name.space.fields.field-name-month.label'
+            }));
+
+            yearCall.should.have.been.calledWith(sinon.match({
+              label: 'name.space.fields.field-name-year.label'
+            }));
+        });
+
+    });
+
     describe('input-submit', function () {
 
         beforeEach(function () {
