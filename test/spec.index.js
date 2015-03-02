@@ -114,48 +114,17 @@ describe('Template Mixins', function () {
                 monthCall = render.getCall(1),
                 yearCall = render.getCall(2);
 
-            dayCall.calledWith(sinon.match({
-              'class': 'date-input',
-              error: undefined,
-              hint: null,
-              id: 'field-name-day',
-              label: 'fields.field-name-day.label',
-              max: 31,
-              maxlength: 2,
-              min: 1,
-              pattern: '[0-9]*',
-              required: true,
-              type: 'text',
-              value: undefined
-            })).should.be.true;
+            dayCall.should.have.been.calledWith(sinon.match({
+              label: 'fields.field-name-day.label'
+            }));
 
-            monthCall.calledWith(sinon.match({
-              pattern: '[0-9]*',
-              min: 1,
-              max: 12,
-              maxlength: 2,
-              'class': 'date-input',
-              id: 'field-name-month',
-              type: 'text',
-              value: undefined,
-              label: 'fields.field-name-month.label',
-              hint: null,
-              error: undefined,
-              required: true
-            })).should.be.true;
+            monthCall.should.have.been.calledWith(sinon.match({
+              label: 'fields.field-name-month.label'
+            }));
 
-            yearCall.calledWith(sinon.match({
-              pattern: '[0-9]*',
-              maxlength: 4,
-              'class': 'date-input',
-              id: 'field-name-year',
-              type: 'text',
-              value: undefined,
-              label: 'fields.field-name-year.label',
-              hint: null,
-              error: undefined,
-              required: true
-            })).should.be.true;
+            yearCall.should.have.been.calledWith(sinon.match({
+              label: 'fields.field-name-year.label'
+            }));
         });
 
         it('prefixes translation lookup with namespace if provided', function () {
@@ -169,48 +138,17 @@ describe('Template Mixins', function () {
                 monthCall = render.getCall(1),
                 yearCall = render.getCall(2);
 
-            dayCall.calledWith(sinon.match({
-              'class': 'date-input',
-              error: undefined,
-              hint: null,
-              id: 'field-name-day',
-              label: 'name.space.fields.field-name-day.label',
-              max: 31,
-              maxlength: 2,
-              min: 1,
-              pattern: '[0-9]*',
-              required: true,
-              type: 'text',
-              value: undefined
-            })).should.be.true;
+            dayCall.should.have.been.calledWith(sinon.match({
+              label: 'name.space.fields.field-name-day.label'
+            }));
 
-            monthCall.calledWith(sinon.match({
-              pattern: '[0-9]*',
-              min: 1,
-              max: 12,
-              maxlength: 2,
-              'class': 'date-input',
-              id: 'field-name-month',
-              type: 'text',
-              value: undefined,
-              label: 'name.space.fields.field-name-month.label',
-              hint: null,
-              error: undefined,
-              required: true
-            })).should.be.true;
+            monthCall.should.have.been.calledWith(sinon.match({
+              label: 'name.space.fields.field-name-month.label'
+            }));
 
-            yearCall.calledWith(sinon.match({
-              pattern: '[0-9]*',
-              maxlength: 4,
-              'class': 'date-input',
-              id: 'field-name-year',
-              type: 'text',
-              value: undefined,
-              label: 'name.space.fields.field-name-year.label',
-              hint: null,
-              error: undefined,
-              required: true
-            })).should.be.true;
+            yearCall.should.have.been.calledWith(sinon.match({
+              label: 'name.space.fields.field-name-year.label'
+            }));
         });
 
     });
