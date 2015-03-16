@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/UKHomeOffice/passport-template-mixins.git"
+    "url": "https://github.com/UKHomeOffice/passports-template-mixins.git"
   },
   "keywords": [
     "middleware",
@@ -25,9 +25,9 @@
   "author": "Seb Insua",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/UKHomeOffice/passport-template-mixins/issues"
+    "url": "https://github.com/UKHomeOffice/passports-template-mixins/issues"
   },
-  "homepage": "https://github.com/UKHomeOffice/passport-template-mixins",
+  "homepage": "https://github.com/UKHomeOffice/passports-template-mixins",
   "dependencies": {
     "hogan.js": "^3.0.2",
     "i18n-lookup": "^0.1.0",
