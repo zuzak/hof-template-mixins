@@ -1,4 +1,4 @@
-# passport-template-mixins
+# passports-template-mixins
 A middleware that exposes a series of Mustache mixins on `res.locals` to ease usage of forms, translations, and some other things.
 
 It takes in three arguments [`t` a function that shall be executed to translate keys into strings of the current locale](https://github.com/i18next/i18next-node), a `fields` object describing config related to the keys that are passed into the mixins that refer to fields, and an options object that has three keys `viewsDirectory` that allows you override the directory that the module checks for partials in (defaults to looking inside the root of this project), `viewEngine` which allows you to alter the file extension of the templates, and `sharedTranslationsKey` which stores a relative key from which to look for field and button translations.
