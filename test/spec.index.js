@@ -196,4 +196,32 @@ describe('Template Mixins', function () {
 
     });
 
+    describe('date', function () {
+
+        beforeEach(function () {
+            middleware = mixins(translate, {});
+        });
+
+        it('adds a function to res.locals', function () {
+            middleware(req, res, next);
+            res.locals['date'].should.be.a('function');
+        });
+
+        it('returns a function', function () {
+            middleware(req, res, next);
+            res.locals['date']().should.be.a('function');
+        });
+
+        it('formats a date', function () {
+            middleware(req, res, next);
+            res.locals['date']().call(res.locals, '2015-03-26').should.equal('26 March 2015');
+        });
+
+        it('applys a date format if specified', function () {
+            middleware(req, res, next);
+            res.locals['date']().call(res.locals, '2015-03|MMMM YYYY').should.equal('March 2015');
+        });
+
+    });
+
 });
