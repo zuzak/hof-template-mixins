@@ -16,14 +16,6 @@ describe('Template Mixins', function () {
             locals: {}
         };
         next = sinon.stub();
-        render = sinon.stub();
-        sinon.stub(Hogan, 'compile').returns({
-            render: render
-        });
-    });
-
-    afterEach(function () {
-        Hogan.compile.restore();
     });
 
     it('returns a middleware', function () {
@@ -36,190 +28,238 @@ describe('Template Mixins', function () {
         next.should.have.been.calledOnce;
     });
 
-    describe('input-text', function () {
+    describe('with stubbed Hogan', function () {
 
         beforeEach(function () {
-            middleware = mixins(translate, {});
-        });
-
-        it('adds a function to res.locals', function () {
-            middleware(req, res, next);
-            res.locals['input-text'].should.be.a('function');
-        });
-
-        it('returns a function', function () {
-            middleware(req, res, next);
-            res.locals['input-text']().should.be.a('function');
-        });
-
-        it('looks up field label', function () {
-            middleware(req, res, next);
-            res.locals['input-text']().call(res.locals, 'field-name');
-            render.should.have.been.calledWith(sinon.match({
-                label: 'fields.field-name.label'
-            }));
-        });
-
-        it('prefixes translation lookup with namespace if provided', function () {
-            middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
-            middleware(req, res, next);
-            res.locals['input-text']().call(res.locals, 'field-name');
-            render.should.have.been.calledWith(sinon.match({
-                label: 'name.space.fields.field-name.label'
-            }));
-        });
-
-    });
-
-    describe('input-date', function () {
-
-        beforeEach(function () {
-            middleware = mixins(translate, {});
-        });
-
-        it('adds a function to res.locals', function () {
-            middleware(req, res, next);
-            res.locals['input-date'].should.be.a('function');
-        });
-
-        it('returns a function', function () {
-            middleware(req, res, next);
-            res.locals['input-date']().should.be.a('function');
-        });
-
-        it('renders thrice if the field is not marked as inexact', function () {
-            middleware(req, res, next);
-            res.locals['input-date']().call(res.locals, 'field-name');
-            render.should.have.been.calledThrice;
-        });
-
-        it('renders twice if the field is marked as inexact', function () {
-            var middlewareWithFieldNameMarkedAsInexact = mixins(translate, {
-                'field-name': {
-                    'inexact': true
-                }
+            render = sinon.stub();
+            sinon.stub(Hogan, 'compile').returns({
+                render: render
             });
-            middlewareWithFieldNameMarkedAsInexact(req, res, next);
-            res.locals['input-date']().call(res.locals, 'field-name');
-            render.should.have.been.calledTwice;
         });
 
-        it('looks up field label', function () {
-            middleware(req, res, next);
-            res.locals['input-date']().call(res.locals, 'field-name');
-
-            render.called;
-
-            var dayCall = render.getCall(0),
-                monthCall = render.getCall(1),
-                yearCall = render.getCall(2);
-
-            dayCall.should.have.been.calledWith(sinon.match({
-              label: 'fields.field-name-day.label'
-            }));
-
-            monthCall.should.have.been.calledWith(sinon.match({
-              label: 'fields.field-name-month.label'
-            }));
-
-            yearCall.should.have.been.calledWith(sinon.match({
-              label: 'fields.field-name-year.label'
-            }));
+        afterEach(function () {
+            Hogan.compile.restore();
         });
 
-        it('prefixes translation lookup with namespace if provided', function () {
-            middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
-            middleware(req, res, next);
-            res.locals['input-date']().call(res.locals, 'field-name');
+        describe('input-text', function () {
 
-            render.called;
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
 
-            var dayCall = render.getCall(0),
-                monthCall = render.getCall(1),
-                yearCall = render.getCall(2);
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['input-text'].should.be.a('function');
+            });
 
-            dayCall.should.have.been.calledWith(sinon.match({
-              label: 'name.space.fields.field-name-day.label'
-            }));
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['input-text']().should.be.a('function');
+            });
 
-            monthCall.should.have.been.calledWith(sinon.match({
-              label: 'name.space.fields.field-name-month.label'
-            }));
+            it('looks up field label', function () {
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'fields.field-name.label'
+                }));
+            });
 
-            yearCall.should.have.been.calledWith(sinon.match({
-              label: 'name.space.fields.field-name-year.label'
-            }));
+            it('prefixes translation lookup with namespace if provided', function () {
+                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'name.space.fields.field-name.label'
+                }));
+            });
+
+        });
+
+        describe('input-date', function () {
+
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['input-date'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['input-date']().should.be.a('function');
+            });
+
+            it('renders thrice if the field is not marked as inexact', function () {
+                middleware(req, res, next);
+                res.locals['input-date']().call(res.locals, 'field-name');
+                render.should.have.been.calledThrice;
+            });
+
+            it('renders twice if the field is marked as inexact', function () {
+                var middlewareWithFieldNameMarkedAsInexact = mixins(translate, {
+                    'field-name': {
+                        'inexact': true
+                    }
+                });
+                middlewareWithFieldNameMarkedAsInexact(req, res, next);
+                res.locals['input-date']().call(res.locals, 'field-name');
+                render.should.have.been.calledTwice;
+            });
+
+            it('looks up field label', function () {
+                middleware(req, res, next);
+                res.locals['input-date']().call(res.locals, 'field-name');
+
+                render.called;
+
+                var dayCall = render.getCall(0),
+                    monthCall = render.getCall(1),
+                    yearCall = render.getCall(2);
+
+                dayCall.should.have.been.calledWith(sinon.match({
+                  label: 'fields.field-name-day.label'
+                }));
+
+                monthCall.should.have.been.calledWith(sinon.match({
+                  label: 'fields.field-name-month.label'
+                }));
+
+                yearCall.should.have.been.calledWith(sinon.match({
+                  label: 'fields.field-name-year.label'
+                }));
+            });
+
+            it('prefixes translation lookup with namespace if provided', function () {
+                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware(req, res, next);
+                res.locals['input-date']().call(res.locals, 'field-name');
+
+                render.called;
+
+                var dayCall = render.getCall(0),
+                    monthCall = render.getCall(1),
+                    yearCall = render.getCall(2);
+
+                dayCall.should.have.been.calledWith(sinon.match({
+                  label: 'name.space.fields.field-name-day.label'
+                }));
+
+                monthCall.should.have.been.calledWith(sinon.match({
+                  label: 'name.space.fields.field-name-month.label'
+                }));
+
+                yearCall.should.have.been.calledWith(sinon.match({
+                  label: 'name.space.fields.field-name-year.label'
+                }));
+            });
+
+        });
+
+        describe('input-submit', function () {
+
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['input-submit'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['input-submit']().should.be.a('function');
+            });
+
+            it('looks up button value with default key of "next"', function () {
+                middleware(req, res, next);
+                res.locals['input-submit']().call(res.locals);
+                render.should.have.been.calledWith(sinon.match({
+                    value: 'buttons.next'
+                }));
+            });
+
+            it('looks up button value with key if provided', function () {
+                middleware(req, res, next);
+                res.locals['input-submit']().call(res.locals, 'button-id');
+                render.should.have.been.calledWith(sinon.match({
+                    value: 'buttons.button-id'
+                }));
+            });
+
+            it('prefixes translation lookup with namespace if provided', function () {
+                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware(req, res, next);
+                res.locals['input-submit']().call(res.locals, 'button-id');
+                render.should.have.been.calledWith(sinon.match({
+                    value: 'name.space.buttons.button-id'
+                }));
+            });
+
         });
 
     });
 
-    describe('input-submit', function () {
+    describe('without stubbed Hogan', function () {
 
-        beforeEach(function () {
-            middleware = mixins(translate, {});
+        describe('date', function () {
+
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['date'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['date']().should.be.a('function');
+            });
+
+            it('formats a date', function () {
+                middleware(req, res, next);
+                res.locals['date']().call(res.locals, '2015-03-26').should.equal('26 March 2015');
+            });
+
+            it('applys a date format if specified', function () {
+                middleware(req, res, next);
+                res.locals['date']().call(res.locals, '2015-03|MMMM YYYY').should.equal('March 2015');
+            });
+
         });
 
-        it('adds a function to res.locals', function () {
-            middleware(req, res, next);
-            res.locals['input-submit'].should.be.a('function');
-        });
+        describe('hyphenate', function () {
 
-        it('returns a function', function () {
-            middleware(req, res, next);
-            res.locals['input-submit']().should.be.a('function');
-        });
+            beforeEach(function () {
+                Hogan = require('hogan.js');
+                middleware = mixins(translate, {});
+            });
 
-        it('looks up button value with default key of "next"', function () {
-            middleware(req, res, next);
-            res.locals['input-submit']().call(res.locals);
-            render.should.have.been.calledWith(sinon.match({
-                value: 'buttons.next'
-            }));
-        });
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['hyphenate'].should.be.a('function');
+            });
 
-        it('looks up button value with key if provided', function () {
-            middleware(req, res, next);
-            res.locals['input-submit']().call(res.locals, 'button-id');
-            render.should.have.been.calledWith(sinon.match({
-                value: 'buttons.button-id'
-            }));
-        });
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['hyphenate']().should.be.a('function');
+            });
 
-        it('prefixes translation lookup with namespace if provided', function () {
-            middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
-            middleware(req, res, next);
-            res.locals['input-submit']().call(res.locals, 'button-id');
-            render.should.have.been.calledWith(sinon.match({
-                value: 'name.space.buttons.button-id'
-            }));
-        });
+            it('hyphenates a string with a single whitespace character', function () {
+                middleware(req, res, next);
+                res.locals['hyphenate']().call(res.locals, 'apple blackberry').should.equal('apple-blackberry');
+            });
 
-    });
+            it('hyphenates a string with multiple whitespace characters', function () {
+                middleware(req, res, next);
+                res.locals['hyphenate']().call(res.locals, 'apple  blackberry   cherry').should.equal('apple-blackberry-cherry');
+            });
 
-    describe('date', function () {
-
-        beforeEach(function () {
-            middleware = mixins(translate, {});
-        });
-
-        it('adds a function to res.locals', function () {
-            middleware(req, res, next);
-            res.locals['date'].should.be.a('function');
-        });
-
-        it('returns a function', function () {
-            middleware(req, res, next);
-            res.locals['date']().should.be.a('function');
-        });
-
-        it('formats a date', function () {
-            middleware(req, res, next);
-            res.locals['date']().call(res.locals, '2015-03-26').should.equal('26 March 2015');
-        });
-
-        it('applys a date format if specified', function () {
-            middleware(req, res, next);
-            res.locals['date']().call(res.locals, '2015-03|MMMM YYYY').should.equal('March 2015');
         });
 
     });
