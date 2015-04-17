@@ -74,6 +74,19 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('should have classes if one or more were specified against the field', function () {
+                middleware = mixins(translate, {
+                    'field-name': {
+                        'class': ['abc', 'def']
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    class: 'abc def'
+                }));
+            });
+
         });
 
         describe('input-date', function () {
