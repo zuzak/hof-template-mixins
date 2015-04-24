@@ -87,6 +87,21 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('uses maxlength property set at a field level over default option', function () {
+                middleware = mixins(translate, {
+                    'field-name': {
+                        'validate': [
+                            { type: 'maxlength', arguments: 10 }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-phone']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    maxlength: 10
+                }));
+            });
+
         });
 
         describe('input-date', function () {
