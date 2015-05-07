@@ -1,12 +1,20 @@
-<fieldset id="{{key}}-group" class="{{#display}}{{display}}{{/display}}{{#error}} validation-error{{/error}}" tabindex="-1">
-    <legend class="visuallyhidden">{{legend}}</legend>
+<fieldset id="{{key}}-group" class="{{#display}}{{display}}{{/display}}{{#error}} validation-error{{/error}}">
+    <legend>
+        {{#error}}<span id="{{key}}-error" class="error-message">{{error.message}}</span>{{/error}}
+        <span class="visuallyhidden">{{legend}}</span>
+    </legend>
     {{#options}}
         <label class="block-label" for="{{key}}-{{value}}">
             <input
-            type="radio" name="{{key}}" id="{{key}}-{{value}}" value="{{value}}"
-            aria-required="true"
-            {{#toggle}} data-toggle="{{toggle}}"{{/toggle}}
-            {{#selected}} checked="checked"{{/selected}}>
+                type="radio"
+                name="{{key}}"
+                id="{{key}}-{{value}}"
+                value="{{value}}"
+                aria-required="true"
+                {{#toggle}} data-toggle="{{toggle}}"{{/toggle}}
+                {{#selected}} checked="checked"{{/selected}}
+                {{#error}} aria-describedby="{{key}}-error" aria-invalid="true"{{/error}}
+            >
             {{{label}}}
         </label>
     {{/options}}
