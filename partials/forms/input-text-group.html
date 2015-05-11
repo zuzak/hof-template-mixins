@@ -2,7 +2,7 @@
     <label for="{{id}}" class="form-label-bold{{#hiddenLabel}} visuallyhidden{{/hiddenLabel}}">
         {{#error}}<span class="error-message" aria-hidden="true">{{error.message}}</span>{{/error}}
         {{{label}}}
-        {{#hint}}<span class="form-hint">{{hint}}</span>{{/hint}}
+        {{#hint}}<span {{$hintId}}id="{{hintId}}" {{/hintId}}class="form-hint">{{hint}}</span>{{/hint}}
         {{#error}}<span class="visuallyhidden">{{error.message}}</span>{{/error}}
     </label>
     <input
