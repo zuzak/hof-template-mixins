@@ -290,6 +290,34 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('url', function () {
+
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
+
+            it('prepends the baseUrl to relative paths', function () {
+                req.baseUrl = '/base';
+                middleware(req, res, next);
+                res.locals.url().call(res.locals, './path').should.equal('/base/path');
+                res.locals.url().call(res.locals, 'path').should.equal('/base/path');
+            });
+
+            it('does not prepend the baseUrl to absolute paths', function () {
+                req.baseUrl = '/base';
+                middleware(req, res, next);
+                res.locals.url().call(res.locals, '/path').should.equal('/path');
+            });
+
+            it('supports urls defined in template placeholders', function () {
+                req.baseUrl = '/base';
+                res.locals.href = './link'
+                middleware(req, res, next);
+                res.locals.url().call(res.locals, '{{href}}').should.equal('/base/link');
+            });
+
+        });
+
     });
 
 });
