@@ -102,6 +102,19 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('uses locales translation property', function () {
+                middleware = mixins(sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name'), {
+                    'field-name': {
+                        'label': 'field-name.label'
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-phone']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'Field name'
+                }));
+            });
+
         });
 
         describe('input-date', function () {
