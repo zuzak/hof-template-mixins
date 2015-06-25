@@ -242,6 +242,54 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('checkbox', function () {
+
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['checkbox'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['checkbox']().should.be.a('function');
+            });
+
+            it('looks up field label', function () {
+                middleware(req, res, next);
+                res.locals['checkbox']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'fields.field-name.label'
+                }));
+            });
+
+            it('prefixes translation lookup with namespace if provided', function () {
+                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware(req, res, next);
+                res.locals['checkbox']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'name.space.fields.field-name.label'
+                }));
+            });
+
+            it('uses locales translation property', function () {
+                middleware = mixins(sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name'), {
+                    'field-name': {
+                        'label': 'field-name.label'
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['checkbox']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'Field name'
+                }));
+            });
+
+        });
+
     });
 
     describe('without stubbed Hogan', function () {
