@@ -44,7 +44,7 @@ input-text
 input-date
 input-text-compound
 input-text-hidden-label
-input-text-postcode
+input-text-code
 input-phone
 radio-group
 checkbox
