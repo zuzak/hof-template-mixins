@@ -290,6 +290,58 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('radio-group', function () {
+
+            beforeEach(function () {
+                middleware = mixins(translate, {});
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['radio-group'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['radio-group']().should.be.a('function');
+            });
+
+            it('looks up field options', function () {
+                middleware = mixins(translate, {
+                    'field-name': {
+                        options: [{
+                            label: 'Foo',
+                            value: 'foo'
+                        }]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    options: [{
+                        label: 'Foo',
+                        value: 'foo',
+                        selected: false,
+                        toggle: undefined
+                    }]
+                }));
+            });
+
+            it('should have classes if one or more were specified against the field', function () {
+                middleware = mixins(translate, {
+                    'field-name': {
+                        'className': ['abc', 'def']
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    className: 'abc def'
+                }));
+            });
+
+        });
+
     });
 
     describe('without stubbed Hogan', function () {
