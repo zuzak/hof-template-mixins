@@ -410,9 +410,36 @@ describe('Template Mixins', function () {
                     }
                 });
                 middleware(req, res, next);
-                res.locals['input-text']().call(res.locals, 'field-name');
+                res.locals['radio-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
                     className: 'abc def'
+                }));
+            });
+
+            it('adds `legendClassName` if it exists as a string or an array', function () {
+                middleware = mixins(translate, {
+                    'field-name-1': {
+                        legend: {
+                            className: 'abc def'
+                        }
+                    },
+                    'field-name-2': {
+                        legend: {
+                            className: ['abc', 'def']
+                        }
+                    }
+                });
+
+                middleware(req, res, next);
+
+                res.locals['radio-group']().call(res.locals, 'field-name-1');
+                render.should.have.been.calledWith(sinon.match({
+                    legendClassName: 'abc def'
+                }));
+
+                res.locals['radio-group']().call(res.locals, 'field-name-2');
+                render.should.have.been.calledWith(sinon.match({
+                    legendClassName: 'abc def'
                 }));
             });
 
