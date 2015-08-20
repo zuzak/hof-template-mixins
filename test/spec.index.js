@@ -403,7 +403,7 @@ describe('Template Mixins', function () {
             });
 
             it('should override default className if one was specified against the field', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'className': 'overwritten'
                     }
