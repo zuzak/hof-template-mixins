@@ -364,6 +364,27 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('should default className `block-label`', function () {
+                middleware(req, res, next);
+                res.locals['checkbox']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    className: 'block-label'
+                }));
+            });
+
+            it('should override default className if one was specified against the field', function () {
+                middleware = mixins(translate, {
+                    'field-name': {
+                        'className': 'overwritten'
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['checkbox']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    className: 'overwritten'
+                }));
+            });
+
         });
 
         describe('radio-group', function () {
