@@ -44,7 +44,7 @@ describe('Template Mixins', function () {
         describe('input-text', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins({}, { translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -66,7 +66,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -75,7 +75,7 @@ describe('Template Mixins', function () {
             });
 
             it('should have classes if one or more were specified against the field', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'className': ['abc', 'def']
                     }
@@ -88,7 +88,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses maxlength property set at a field level over default option', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'validate': [
                             { type: 'maxlength', arguments: 10 }
@@ -103,15 +103,43 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                middleware = mixins(sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name'), {
+                var translate = sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name');
+                middleware = mixins({
                     'field-name': {
                         'label': 'field-name.label'
                     }
-                });
+                }, { translate: translate });
                 middleware(req, res, next);
                 res.locals['input-phone']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
                     label: 'Field name'
+                }));
+            });
+
+            it('includes a hint if it is defined in translation', function () {
+                var translate = sinon.stub().withArgs({'label': 'field-name.hint'}).returns('Field hint');
+                middleware = mixins({
+                    'field-name': {
+                        'label': 'field-name.label'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
+            it('does not include a hint if it is not defined in translation', function () {
+                middleware = mixins({
+                    'field-name': {
+                        'label': 'field-name.label'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: null
                 }));
             });
 
@@ -140,7 +168,7 @@ describe('Template Mixins', function () {
             });
 
             it('renders twice if the field is marked as inexact', function () {
-                var middlewareWithFieldNameMarkedAsInexact = mixins(translate, {
+                var middlewareWithFieldNameMarkedAsInexact = mixins({
                     'field-name': {
                         'inexact': true
                     }
@@ -174,7 +202,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
@@ -202,7 +230,7 @@ describe('Template Mixins', function () {
         describe('input-submit', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins({}, { translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -232,7 +260,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-submit']().call(res.locals, 'button-id');
                 render.should.have.been.calledWith(sinon.match({
@@ -245,7 +273,7 @@ describe('Template Mixins', function () {
         describe('textarea', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins({}, { translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -267,7 +295,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals.textarea().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -276,7 +304,7 @@ describe('Template Mixins', function () {
             });
 
             it('should have classes if one or more were specified against the field', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'className': ['abc', 'def']
                     }
@@ -289,7 +317,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses maxlength property set at a field level over default option', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'validate': [
                             { type: 'maxlength', arguments: 10 }
@@ -304,11 +332,12 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                middleware = mixins(sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name'), {
+                var translate = sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name');
+                middleware = mixins({
                     'field-name': {
                         'label': 'field-name.label'
                     }
-                });
+                }, { translate: translate });
                 middleware(req, res, next);
                 res.locals.textarea().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -321,7 +350,7 @@ describe('Template Mixins', function () {
         describe('checkbox', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins({}, { translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -343,7 +372,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins(translate, {}, { sharedTranslationsKey: 'name.space' });
+                middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -352,11 +381,12 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                middleware = mixins(sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name'), {
+                var translate = sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name');
+                middleware = mixins({
                     'field-name': {
                         'label': 'field-name.label'
                     }
-                });
+                }, { translate: translate });
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -373,7 +403,7 @@ describe('Template Mixins', function () {
             });
 
             it('should override default className if one was specified against the field', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'className': 'overwritten'
                     }
@@ -390,7 +420,7 @@ describe('Template Mixins', function () {
         describe('radio-group', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins({}, { translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -404,7 +434,7 @@ describe('Template Mixins', function () {
             });
 
             it('looks up field options', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         options: [{
                             label: 'Foo',
@@ -425,7 +455,7 @@ describe('Template Mixins', function () {
             });
 
             it('should have classes if one or more were specified against the field', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name': {
                         'className': ['abc', 'def']
                     }
@@ -438,7 +468,7 @@ describe('Template Mixins', function () {
             });
 
             it('adds `legendClassName` if it exists as a string or an array', function () {
-                middleware = mixins(translate, {
+                middleware = mixins({
                     'field-name-1': {
                         legend: {
                             className: 'abc def'
@@ -473,7 +503,7 @@ describe('Template Mixins', function () {
         describe('date', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins();
             });
 
             it('adds a function to res.locals', function () {
@@ -502,7 +532,7 @@ describe('Template Mixins', function () {
 
             beforeEach(function () {
                 Hogan = require('hogan.js');
-                middleware = mixins(translate, {});
+                middleware = mixins();
             });
 
             it('adds a function to res.locals', function () {
@@ -530,7 +560,7 @@ describe('Template Mixins', function () {
         describe('url', function () {
 
             beforeEach(function () {
-                middleware = mixins(translate, {});
+                middleware = mixins();
             });
 
             it('prepends the baseUrl to relative paths', function () {
