@@ -33,7 +33,7 @@ app.use(function (req, res) {
 
 ## Translation
 
-By default any function set to `req.translate` will be used for translation if it exists. For example, that generate using [i18n-future](https://npmjs.com/package.i18n-future) middleware.
+By default any function set to `req.translate` will be used for translation if it exists. For example, that generated using [i18n-future](https://npmjs.com/package/i18n-future) middleware.
 
 ## Options
 
