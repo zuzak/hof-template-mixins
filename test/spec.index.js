@@ -189,15 +189,15 @@ describe('Template Mixins', function () {
                     yearCall = render.getCall(2);
 
                 dayCall.should.have.been.calledWith(sinon.match({
-                  label: 'fields.field-name-day.label'
+                    label: 'fields.field-name-day.label'
                 }));
 
                 monthCall.should.have.been.calledWith(sinon.match({
-                  label: 'fields.field-name-month.label'
+                    label: 'fields.field-name-month.label'
                 }));
 
                 yearCall.should.have.been.calledWith(sinon.match({
-                  label: 'fields.field-name-year.label'
+                    label: 'fields.field-name-year.label'
                 }));
             });
 
@@ -213,15 +213,30 @@ describe('Template Mixins', function () {
                     yearCall = render.getCall(2);
 
                 dayCall.should.have.been.calledWith(sinon.match({
-                  label: 'name.space.fields.field-name-day.label'
+                    label: 'name.space.fields.field-name-day.label'
                 }));
 
                 monthCall.should.have.been.calledWith(sinon.match({
-                  label: 'name.space.fields.field-name-month.label'
+                    label: 'name.space.fields.field-name-month.label'
                 }));
 
                 yearCall.should.have.been.calledWith(sinon.match({
-                  label: 'name.space.fields.field-name-year.label'
+                    label: 'name.space.fields.field-name-year.label'
+                }));
+            });
+
+            it('sets a date boolean to conditionally show input errors', function () {
+                middleware(req, res, next);
+                res.locals['input-date']().call(res.locals, 'field-name');
+
+                render.getCall(0).should.have.been.calledWithExactly(sinon.match({
+                    date: true
+                }));
+                render.getCall(1).should.have.been.calledWithExactly(sinon.match({
+                    date: true
+                }));
+                render.getCall(2).should.have.been.calledWithExactly(sinon.match({
+                    date: true
                 }));
             });
 
