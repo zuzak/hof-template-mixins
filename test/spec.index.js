@@ -180,6 +180,21 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('allows configuration of a non-required input with a visuallyhidden label', function () {
+                middleware = mixins({
+                    'field-name': {
+                        required: false,
+                        labelClassName: 'visuallyhidden'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    required: false,
+                    labelClassName: 'visuallyhidden'
+                }));
+            });
+
         });
 
         describe('input-date', function () {
