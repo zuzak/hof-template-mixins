@@ -449,6 +449,25 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('sets additional element attributes', function () {
+                middleware = mixins({
+                    'field-name': {
+                        attributes: [
+                            { attribute: 'spellcheck', value: 'true' },
+                            { attribute: 'autocapitalize', value: 'sentences' }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['textarea']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    attributes: [
+                        { attribute: 'spellcheck', value: 'true' },
+                        { attribute: 'autocapitalize', value: 'sentences' }
+                    ]
+                }));
+            });
+
         });
 
         describe('checkbox', function () {
