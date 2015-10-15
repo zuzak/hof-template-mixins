@@ -143,6 +143,43 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('sets `labelClassName` to "form-label-bold" by default', function () {
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'form-label-bold'
+                }));
+            });
+
+            it('overrides `labelClassName` when set in field options', function () {
+                middleware = mixins({
+                    'field-name': {
+                        labelClassName: 'visuallyhidden'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'visuallyhidden'
+                }));
+            });
+
+            it('sets all classes of `labelClassName` option', function () {
+                middleware = mixins({
+                    'field-name': {
+                        labelClassName: ['abc', 'def']
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'abc def'
+                }));
+            });
+
         });
 
         describe('input-date', function () {
@@ -386,6 +423,43 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('sets `labelClassName` to "form-label-bold" by default', function () {
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['textarea']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'form-label-bold'
+                }));
+            });
+
+            it('overrides `labelClassName` when set in field options', function () {
+                middleware = mixins({
+                    'field-name': {
+                        'labelClassName': 'visuallyhidden'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['textarea']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'visuallyhidden'
+                }));
+            });
+
+            it('sets all classes of `labelClassName` option', function () {
+                middleware = mixins({
+                    'field-name': {
+                        labelClassName: ['abc', 'def']
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['textarea']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'abc def'
+                }));
+            });
+
         });
 
         describe('checkbox', function () {
@@ -535,6 +609,60 @@ describe('Template Mixins', function () {
                 }));
             });
 
+        });
+
+        describe('select', function () {
+
+            beforeEach(function () {
+                middleware = mixins({}, { translate: translate });
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['select'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['select']().should.be.a('function');
+            });
+
+            it('defaults `labelClassName` to "form-label-bold"', function () {
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'form-label-bold'
+                }));
+            });
+
+            it('overrides `labelClassName` when set in field options', function () {
+                middleware = mixins({
+                    'field-name': {
+                        labelClassName: 'visuallyhidden'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'visuallyhidden'
+                }));
+            });
+
+            it('sets all classes of `labelClassName` option', function () {
+                middleware = mixins({
+                    'field-name': {
+                        labelClassName: ['abc', 'def']
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    labelClassName: 'abc def'
+                }));
+            });
         });
 
     });
