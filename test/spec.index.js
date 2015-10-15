@@ -242,6 +242,32 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('input-number', function () {
+
+            beforeEach(function () {
+                middleware = mixins({}, { translate: translate });
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['input-number'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['input-number']().should.be.a('function');
+            });
+
+            it('adds a pattern attribute to trigger the number keypad on mobile devices', function () {
+                middleware(req, res, next);
+                res.locals['input-number']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    pattern: '[0-9]*'
+                }));
+            });
+
+        });
+
         describe('input-submit', function () {
 
             beforeEach(function () {
