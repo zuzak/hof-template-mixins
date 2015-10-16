@@ -1,5 +1,5 @@
 <div id="{{id}}-group" class="form-group{{#compound}} form-group-compound{{/compound}}{{#error}} validation-error{{/error}}">
-    <label for="{{id}}" class="{{labelClassName}}{{#hiddenLabel}} visuallyhidden{{/hiddenLabel}}">{{label}}</label>
+    <label for="{{id}}" class="{{labelClassName}}}">{{label}}</label>
     <select id="{{id}}" class="{{#class}}{{class}}{{/class}}{{#error}} invalid-input{{/error}}" name="{{id}}" aria-required="{{required}}">
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>

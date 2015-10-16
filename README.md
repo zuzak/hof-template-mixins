@@ -68,7 +68,6 @@ select
 input-text
 input-date
 input-text-compound
-input-text-hidden-label
 input-text-code
 input-number
 input-phone
