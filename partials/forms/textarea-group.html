@@ -11,6 +11,9 @@
         class="form-control{{#className}} {{className}}{{/className}}{{#error}} invalid-input{{/error}}"
         aria-required="{{required}}"
         {{#maxlength}} maxlength="{{maxlength}}"{{/maxlength}}
+        {{#attributes}}
+            {{attribute}}="{{value}}"
+        {{/attributes}}
         {{#hintId}} aria-describedby="{{hintId}}"{{/hintId}}
         {{#error}} aria-invalid="true"{{/error}}
     >{{value}}</textarea>
