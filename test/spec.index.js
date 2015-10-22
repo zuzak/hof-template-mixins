@@ -643,6 +643,41 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('uses locales translation for legend if a field value isn\'t provided', function () {
+                translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    legend: 'Field legend'
+                }));
+            });
+
+            it('adds a hint if it exists in locales', function () {
+                translate = sinon.stub().withArgs('field.field-name.hint').returns('Field hint');
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
+            it('doesn\'t add a hint if the hint doesn\'t exist in locales', function () {
+                middleware = mixins({
+                    'field-name': {}
+                });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    hint: null
+                }));
+            });
+
         });
 
         describe('select', function () {
