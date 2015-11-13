@@ -180,6 +180,30 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('sets `autocomplete` to false by default', function () {
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    autocomplete: false
+                }));
+            });
+
+            it('overrides `autocomplete` when set in field options', function () {
+                middleware = mixins({
+                    'field-name': {
+                        autocomplete: true
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    autocomplete: true
+                }));
+            });
+
             it('allows configuration of a non-required input with a visuallyhidden label', function () {
                 middleware = mixins({
                     'field-name': {
