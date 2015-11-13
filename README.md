@@ -78,3 +78,18 @@ checkbox-required
 input-submit
 textarea
 ```
+
+## Options
+
+- `className`: A string or array of string class names.
+- `label`: The intended value of the HTML `label` attribute.
+- `type`: The value of the HTML input `type` attribute.
+- `required`: Value applied to `aria-required` HTML attribute.
+- `hint`: This adds context to the label, which it is a part of, for input text, radio groups and textarea. It is used within the input by aria-describedby for screen readers.
+- `maxlength`: Applicable to text-based fields and mapped to the `maxlength` HTML attribute.
+- `options`: Applicable to HTML `select` and `radio` controls and used to generate the items of either HTML element.
+- `selected`: Applicable to `select`, `checkbox`, and `radio` controls. Will render the selected HTML option/element selected or checked.
+- `legend`: Applicable to `radio` button controls, which are wrapped in a HTML `fieldset` with a `legend` element.
+- `legendClassName`: Applied as a class name to HTML `legend` attribute.
+- `toggle`: Can be used to toggle the display of the HTML element with a matching `id`. See [passports-frontend-toolkit](https://github.com/UKHomeOffice/passports-frontend-toolkit/blob/master/assets/javascript/progressive-reveal.js) for details.
+- `attributes`: A hash of key/value pairs applicable to a HTML `textarea` field. Each key/value is assigned as an attribute of the `textarea`. For example `spellcheck="true"`.
