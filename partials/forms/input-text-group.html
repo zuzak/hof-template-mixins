@@ -18,5 +18,8 @@
         {{#pattern}} pattern="{{pattern}}"{{/pattern}}
         {{#hintId}} aria-describedby="{{hintId}}"{{/hintId}}
         {{#error}} aria-invalid="true"{{/error}}
+        {{#attributes}}
+            {{attribute}}="{{value}}"
+        {{/attributes}}
     >
 </div>
