@@ -180,6 +180,23 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('sets additional element attributes', function () {
+                middleware = mixins({
+                    'field-name': {
+                        attributes: [
+                            { attribute: 'autocomplete', value: 'true' }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    attributes: [
+                        { attribute: 'autocomplete', value: 'true' }
+                    ]
+                }));
+            });
+
             it('allows configuration of a non-required input with a visuallyhidden label', function () {
                 middleware = mixins({
                     'field-name': {
