@@ -749,6 +749,24 @@ describe('Template Mixins', function () {
                     labelClassName: 'abc def'
                 }));
             });
+
+            it('sets labels to an empty string for translations that are returned as `undefined`', function () {
+                var translate = sinon.stub().returns(undefined);
+                middleware = mixins({
+                    'field-name': {
+                        options: [
+                            ''
+                        ]
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    options: [
+                        { label: '', selected: false, toggle: undefined, value: '' }
+                    ]
+                }));
+            });
         });
 
     });
