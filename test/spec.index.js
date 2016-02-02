@@ -141,7 +141,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('includes a hint if it is defined in the locals', function () {
+            it('includes a hint if it is defined in the locales', function () {
                 var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 middleware = mixins({
                     'field-name': {
