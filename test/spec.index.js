@@ -128,7 +128,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                var translate = sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name');
+                var translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 middleware = mixins({
                     'field-name': {
                         'label': 'field-name.label'
@@ -142,7 +142,7 @@ describe('Template Mixins', function () {
             });
 
             it('includes a hint if it is defined in the locals', function () {
-                var translate = sinon.stub().withArgs({'hint': 'field-name.hint'}).returns('Field hint');
+                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 middleware = mixins({
                     'field-name': {
                     }
@@ -155,7 +155,7 @@ describe('Template Mixins', function () {
             });
 
             it('includes a hint if it is defined in translation', function () {
-                var translate = sinon.stub().withArgs({'hint': 'field-name.hint'}).returns('Field hint');
+                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 middleware = mixins({
                     'field-name': {
                         'hint': 'field-name.hint'
@@ -480,7 +480,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                var translate = sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name');
+                var translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 middleware = mixins({
                     'field-name': {
                         'label': 'field-name.label'
@@ -585,7 +585,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                var translate = sinon.stub().withArgs({'label': 'field-name.label'}).returns('Field name');
+                var translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 middleware = mixins({
                     'field-name': {
                         'label': 'field-name.label'
