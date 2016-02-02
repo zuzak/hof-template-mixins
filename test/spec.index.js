@@ -65,6 +65,18 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('looks up default field label if nothing is set', function () {
+                middleware = mixins({
+                    'field-name': {
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'fields.field-name.label'
+                }));
+            });
+
             it('prefixes translation lookup with namespace if provided', function () {
                 middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
