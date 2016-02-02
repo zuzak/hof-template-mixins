@@ -710,6 +710,18 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('uses locales translation for hint if a field value isn\'t provided', function () {
+                translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
             it('adds a hint if it exists in locales', function () {
                 translate = sinon.stub().withArgs('field.field-name.hint').returns('Field hint');
                 middleware = mixins({
