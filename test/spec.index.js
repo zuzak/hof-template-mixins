@@ -77,6 +77,19 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('uses label when available for the field', function () {
+                middleware = mixins({
+                    'field-name': {
+                        label: 'Label text'
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    label: 'Label text'
+                }));
+            });
+
             it('prefixes translation lookup with namespace if provided', function () {
                 middleware = mixins({}, { translate: translate, sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
@@ -128,11 +141,24 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('includes a hint if it is defined in translation', function () {
-                var translate = sinon.stub().withArgs({'label': 'field-name.hint'}).returns('Field hint');
+            it('includes a hint if it is defined in the locals', function () {
+                var translate = sinon.stub().withArgs({'hint': 'field-name.hint'}).returns('Field hint');
                 middleware = mixins({
                     'field-name': {
-                        'label': 'field-name.label'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
+            it('includes a hint if it is defined in translation', function () {
+                var translate = sinon.stub().withArgs({'hint': 'field-name.hint'}).returns('Field hint');
+                middleware = mixins({
+                    'field-name': {
+                        'hint': 'field-name.hint'
                     }
                 }, { translate: translate });
                 middleware(req, res, next);
@@ -145,7 +171,7 @@ describe('Template Mixins', function () {
             it('does not include a hint if it is not defined in translation', function () {
                 middleware = mixins({
                     'field-name': {
-                        'label': 'field-name.label'
+                        'hint': 'field-name.hint'
                     }
                 }, { translate: translate });
                 middleware(req, res, next);
