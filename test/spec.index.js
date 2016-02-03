@@ -168,6 +168,19 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('includes a hint if it is defined in field', function () {
+                middleware = mixins({
+                    'field-name': {
+                        'hint': 'Field hint'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
             it('does not include a hint if it is not defined in translation', function () {
                 middleware = mixins({
                     'field-name': {
