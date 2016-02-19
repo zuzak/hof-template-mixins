@@ -788,6 +788,19 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('includes a hint if it is defined in the locales', function () {
+                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
+                middleware = mixins({
+                    'field-name': {
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
             it('sets labels to an empty string for translations that are returned as `undefined`', function () {
                 var translate = sinon.stub().returns(undefined);
                 middleware = mixins({
