@@ -801,6 +801,34 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('includes a hint if it is defined in translation', function () {
+                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
+                middleware = mixins({
+                    'field-name': {
+                        'hint': 'field-name.hint'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
+            it('does not include a hint if it is not defined in translation', function () {
+                var translate = sinon.stub().withArgs('field-name.hint').returns(null);
+                middleware = mixins({
+                    'field-name': {
+                        'hint': 'field-name.hint'
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    hint: null
+                }));
+            });
+
             it('sets labels to an empty string for translations that are returned as `undefined`', function () {
                 var translate = sinon.stub().returns(undefined);
                 middleware = mixins({
