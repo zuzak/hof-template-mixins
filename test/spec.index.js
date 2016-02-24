@@ -250,6 +250,57 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('by default, assumes the field isn\'t required', function () {
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    required: false
+                }));
+            });
+
+            it('allows configuration of required status with the required property', function () {
+                middleware = mixins({
+                    'field-name': {
+                        required: true
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    required: true
+                }));
+            });
+
+            it('allows configuration of required status with the required validator', function () {
+                middleware = mixins({
+                    'field-name': {
+                        validate: ['required']
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    required: true
+                }));
+            });
+
+            it('the required property takes precedence over the required validator', function () {
+                middleware = mixins({
+                    'field-name': {
+                        required: false,
+                        validate: ['required']
+                    }
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['input-text']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    required: false
+                }));
+            });
+
         });
 
         describe('input-date', function () {
