@@ -973,6 +973,13 @@ describe('Template Mixins', function () {
                 res.locals.url().call(res.locals, 'path').should.equal('/base/path');
             });
 
+            it('returns path if baseUrl is not set', function () {
+                req.baseUrl = undefined;
+                middleware(req, res, next);
+                res.locals.url().call(res.locals, 'path').should.equal('path');
+                res.locals.url().call(res.locals, './path').should.equal('./path');
+            });
+
             it('does not prepend the baseUrl to absolute paths', function () {
                 req.baseUrl = '/base';
                 middleware(req, res, next);
