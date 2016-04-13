@@ -1,6 +1,7 @@
 var mixins = require('../lib/template-mixins');
-
+var _ = require('underscore');
 var Hogan = require('hogan.js');
+var fs = require('fs');
 
 function translate(key) {
     return key;
@@ -838,13 +839,14 @@ describe('Template Mixins', function () {
                 });
                 middleware(req, res, next);
                 res.locals['radio-group']().call(res.locals, 'field-name');
-                render.should.have.been.calledWith(sinon.match({
-                    options: [{
+                render.should.have.been.calledWith(sinon.match(function (value) {
+                    var obj = value.options[0];
+                    return _.isMatch(obj, {
                         label: 'Foo',
                         value: 'foo',
                         selected: false,
                         toggle: undefined
-                    }]
+                    });
                 }));
             });
 
@@ -1030,10 +1032,14 @@ describe('Template Mixins', function () {
                 }, { translate: translate });
                 middleware(req, res, next);
                 res.locals['select']().call(res.locals, 'field-name');
-                render.should.have.been.calledWith(sinon.match({
-                    options: [
-                        { label: '', selected: false, toggle: undefined, value: '' }
-                    ]
+                render.should.have.been.calledWith(sinon.match(function (value) {
+                    var obj = value.options[0];
+                    return _.isMatch(obj, {
+                        label: '',
+                        selected: false,
+                        toggle: undefined,
+                        value: ''
+                    });
                 }));
             });
         });
@@ -1130,6 +1136,60 @@ describe('Template Mixins', function () {
                 res.locals.href = './link';
                 middleware(req, res, next);
                 res.locals.url().call(res.locals, '{{href}}').should.equal('/base/link');
+            });
+
+        });
+
+        describe('renderChild', function () {
+            var renderChild;
+
+            beforeEach(function () {
+                middleware = mixins();
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                renderChild = render.lastCall.args[0].renderChild;
+            });
+
+            it('is a function', function () {
+                renderChild.should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                renderChild().should.be.a('function');
+            });
+
+            describe('called with child', function () {
+                var scope = {};
+
+                beforeEach(function () {
+                    renderChild = renderChild();
+                });
+
+                it('accepts an HTML template string', function () {
+                    scope.child = '<div>{{key}}</div>';
+                    scope.key = 'value';
+                    renderChild.call(scope).should.be.equal('<div>value</div>');
+                });
+
+                it('accepts a template mixin and renders it in a panel', function () {
+                    scope.child = 'input-text';
+                    scope.toggle = 'child-field-name';
+                    var subfield = res.locals['input-text']().call({}, 'child-field-name');
+                    var output = '<div id="child-field-name-panel" class="reveal js-hidden">';
+                    output += '\n    <div class="panel-indent">\n';
+                    output += subfield;
+                    output += '    </div>';
+                    output += '\n</div>\n';
+                    renderChild.call(_.extend({}, scope, res.locals)).should.be.equal(output);
+                });
+
+                it('accepts a custom partial', function () {
+                    var customPartial = '<div>Custom Partial</div>';
+                    scope.child = 'partials/custom-partial';
+                    sinon.stub(fs, 'readFileSync').returns(customPartial);
+                    renderChild.call(scope).should.be.equal(customPartial);
+                    fs.readFileSync.restore();
+                });
             });
 
         });
