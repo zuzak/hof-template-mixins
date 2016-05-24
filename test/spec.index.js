@@ -889,7 +889,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation for legend if a field value isn\'t provided', function () {
-                translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
+                var translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
                 middleware = mixins({
                     'field-name': {}
                 }, { translate: translate });
@@ -901,7 +901,7 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation for hint if a field value isn\'t provided', function () {
-                translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
+                var translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
                 middleware = mixins({
                     'field-name': {}
                 }, { translate: translate });
@@ -1127,7 +1127,7 @@ describe('Template Mixins', function () {
 
             it('supports urls defined in template placeholders', function () {
                 req.baseUrl = '/base';
-                res.locals.href = './link'
+                res.locals.href = './link';
                 middleware(req, res, next);
                 res.locals.url().call(res.locals, '{{href}}').should.equal('/base/link');
             });
