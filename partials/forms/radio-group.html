@@ -1,4 +1,4 @@
-<fieldset id="{{key}}-group" class="{{#className}}{{className}}{{/className}} {{#error}}validation-error{{/error}}">
+<fieldset id="{{key}}-group" class="{{#className}}{{className}}{{/className}} {{#error}}validation-error{{/error}}" role="radiogroup" aria-required="true">
     <legend>
         {{#error}}<span id="{{key}}-error" class="error-message">{{error.message}}</span>{{/error}}
         <span{{#legendClassName}} class="{{legendClassName}}"{{/legendClassName}}>{{legend}}</span>
@@ -11,7 +11,7 @@
                 name="{{key}}"
                 id="{{key}}-{{value}}"
                 value="{{value}}"
-                aria-required="true"
+                required="true"
                 {{#toggle}} data-toggle="{{toggle}}"{{/toggle}}
                 {{#selected}} checked="checked"{{/selected}}
                 {{^error}}{{#hint}} aria-describedby="{{key}}-hint"{{/hint}}{{/error}}
