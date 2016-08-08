@@ -1076,6 +1076,153 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('time', function () {
+
+            beforeEach(function () {
+                middleware = mixins();
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['time'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['time']().should.be.a('function');
+            });
+
+            it('changes 12:00am to midnight', function () {
+                middleware(req, res, next);
+                res.locals['time']().call(res.locals, '26 March 2015 12:00am').should.equal('26 March 2015 midnight');
+            });
+
+            it('changes 12:00pm to midday', function () {
+                middleware(req, res, next);
+                res.locals['time']().call(res.locals, '26 March 2015 12:00pm').should.equal('26 March 2015 midday');
+            });
+
+            it('changes leading 12:00am to Midnight', function () {
+                middleware(req, res, next);
+                res.locals['time']().call(res.locals, '12:00am 26 March 2015').should.equal('Midnight 26 March 2015');
+            });
+
+            it('changes leading 12:00pm to Midday', function () {
+                middleware(req, res, next);
+                res.locals['time']().call(res.locals, '12:00pm 26 March 2015').should.equal('Midday 26 March 2015');
+            });
+
+            it('should pass through other times', function () {
+                middleware(req, res, next);
+                res.locals['time']().call(res.locals, '6:30am 26 March 2015').should.equal('6:30am 26 March 2015');
+            });
+        });
+
+        describe('uppercase', function () {
+            beforeEach(function () {
+                middleware = mixins();
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['uppercase'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['uppercase']().should.be.a('function');
+            });
+
+            it('changes text to uppercase', function () {
+                middleware(req, res, next);
+                res.locals['uppercase']().call(res.locals, 'abcdEFG').should.equal('ABCDEFG');
+            });
+
+            it('returns an empty string if no text given', function () {
+                middleware(req, res, next);
+                res.locals['uppercase']().call(res.locals).should.equal('');
+            });
+        });
+
+        describe('lowercase', function () {
+            beforeEach(function () {
+                middleware = mixins();
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['lowercase'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['lowercase']().should.be.a('function');
+            });
+
+            it('changes text to lowercase', function () {
+                middleware(req, res, next);
+                res.locals['lowercase']().call(res.locals, 'abcdEFG').should.equal('abcdefg');
+            });
+
+            it('returns an empty string if no text given', function () {
+                middleware(req, res, next);
+                res.locals['lowercase']().call(res.locals).should.equal('');
+            });
+        });
+
+        describe('currency', function () {
+            beforeEach(function () {
+                middleware = mixins();
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['currency'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['currency']().should.be.a('function');
+            });
+
+            it('formats whole numbers with no decimal places', function () {
+                middleware(req, res, next);
+                res.locals['currency']().call(res.locals, '3.00').should.equal('£3');
+            });
+
+            it('formats 3.50 to two decimal places', function () {
+                middleware(req, res, next);
+                res.locals['currency']().call(res.locals, '3.50').should.equal('£3.50');
+            });
+
+            it('formats and rounds 3.567 to two decimal places', function () {
+                middleware(req, res, next);
+                res.locals['currency']().call(res.locals, '3.567').should.equal('£3.57');
+            });
+
+            it('formats 4.5678 to two decimal places from a local variable', function () {
+                middleware(req, res, next);
+                res.locals.value = 4.5678;
+                res.locals['currency']().call(res.locals, '{{value}}').should.equal('£4.57');
+            });
+
+            it('returns non float text as is', function () {
+                middleware(req, res, next);
+                res.locals['currency']().call(res.locals, 'test').should.equal('test');
+            });
+
+            it('returns non float template text as is', function () {
+                middleware(req, res, next);
+                res.locals.value = 'test';
+                res.locals['currency']().call(res.locals, '{{value}}').should.equal('test');
+            });
+
+            it('returns an empty string if no text given', function () {
+                middleware(req, res, next);
+                res.locals['currency']().call(res.locals).should.equal('');
+            });
+        });
+
         describe('hyphenate', function () {
 
             beforeEach(function () {
@@ -1190,6 +1337,21 @@ describe('Template Mixins', function () {
                     renderChild.call(scope).should.be.equal(customPartial);
                     fs.readFileSync.restore();
                 });
+            });
+
+        });
+
+        describe('Multiple lambdas', function () {
+            beforeEach(function () {
+                middleware = mixins();
+            });
+
+            it('recursively runs lambdas wrapped in other lambdas correctly', function () {
+                middleware(req, res, next);
+                res.locals.value = '2016-01-01T00:00:00.000Z';
+                var result = res.locals['uppercase']().call(res.locals,
+                    '{{#time}}{{#date}}{{value}}|h:mma on D MMMM YYYY{{/date}}{{/time}}');
+                result.should.equal('MIDNIGHT ON 1 JANUARY 2016');
             });
 
         });
