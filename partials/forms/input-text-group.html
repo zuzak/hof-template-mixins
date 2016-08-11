@@ -1,4 +1,4 @@
-<div id="{{id}}-group" class="form-group{{#compound}} form-group-compound{{/compound}}{{^date}}{{#error}} validation-error{{/error}}{{/date}}">
+<div id="{{id}}-group" class="form-group{{#compound}} form-group-compound{{/compound}}{{^date}}{{#error}} error{{/error}}{{/date}}">
     <label for="{{id}}" class="{{labelClassName}}">
         {{{label}}}
         {{#hint}}<span {{$hintId}}id="{{hintId}}" {{/hintId}}class="form-hint">{{hint}}</span>{{/hint}}
@@ -8,7 +8,7 @@
         type="{{type}}"
         name="{{id}}"
         id="{{id}}"
-        class="form-control{{#className}} {{className}}{{/className}}{{#error}} invalid-input{{/error}}"
+        class="form-control{{#className}} {{className}}{{/className}}"
         aria-required="{{required}}"
         {{#value}} value="{{value}}"{{/value}}
         {{#min}} min="{{min}}"{{/min}}
