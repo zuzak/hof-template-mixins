@@ -8,7 +8,7 @@
         type="{{type}}"
         name="{{id}}"
         id="{{id}}"
-        class="form-control{{#className}} {{className}}{{/className}}"
+        class="form-control{{#className}} {{className}}{{/className}}{{#date}}{{#error}} invalid-input{{/error}}{{/date}}"
         aria-required="{{required}}"
         {{#value}} value="{{value}}"{{/value}}
         {{#min}} min="{{min}}"{{/min}}
