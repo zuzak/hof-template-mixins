@@ -1287,8 +1287,42 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('renderChild', function () {
-            var renderChild;
+        describe('Multiple lambdas', function () {
+
+            beforeEach(function () {
+                middleware = mixins();
+            });
+
+            it('recursively runs lambdas wrapped in other lambdas correctly', function () {
+                middleware(req, res, next);
+                res.locals.value = '2016-01-01T00:00:00.000Z';
+                var result = res.locals['uppercase']().call(res.locals,
+                    '{{#time}}{{#date}}{{value}}|h:mma on D MMMM YYYY{{/date}}{{/time}}');
+                result.should.equal('MIDNIGHT ON 1 JANUARY 2016');
+            });
+
+        });
+
+    });
+
+    describe('child templates', function () {
+        var render,
+            renderChild,
+            fields,
+            options;
+
+        beforeEach(function () {
+            render = sinon.stub();
+            sinon.stub(Hogan, 'compile').returns({
+                render: render
+            });
+        });
+
+        afterEach(function () {
+            Hogan.compile.restore();
+        });
+
+        describe('radio-group renderChild', function () {
 
             beforeEach(function () {
                 middleware = mixins();
@@ -1306,52 +1340,147 @@ describe('Template Mixins', function () {
             });
 
             describe('called with child', function () {
-                var scope = {};
 
                 beforeEach(function () {
+                    options = [ {} ];
+                    fields = {
+                        'field-name': {
+                            options: options
+                        },
+                        'child-field-name': {}
+                    };
                     renderChild = renderChild();
                 });
 
                 it('accepts an HTML template string', function () {
-                    scope.child = '<div>{{key}}</div>';
-                    scope.key = 'value';
-                    renderChild.call(scope).should.be.equal('<div>value</div>');
+                    Hogan.compile.restore();
+                    options[0] = {
+                        child: '<div>{{key}}</div>',
+                        key: 'value'
+                    };
+                    renderChild.call(fields['field-name'].options[0]).should.be.equal('<div>value</div>');
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
                 });
 
                 it('accepts a template mixin and renders it in a panel', function () {
-                    scope.child = 'input-text';
-                    scope.toggle = 'child-field-name';
-                    var subfield = res.locals['input-text']().call({}, 'child-field-name');
+                    Hogan.compile.restore();
+                    options[0] = {
+                        value: true,
+                        label: 'True',
+                        toggle: 'child-field-name',
+                        child: 'input-text'
+                    };
+                    sinon.stub(res.locals, 'input-text').returns(function (key) {
+                        return Hogan.compile('<div>{{key}}</div>').render({ key: key });
+                    });
                     var output = '<div id="child-field-name-panel" class="reveal js-hidden">';
                     output += '\n    <div class="panel-indent">\n';
-                    output += subfield;
+                    output += '<div>child-field-name</div>';
                     output += '    </div>';
                     output += '\n</div>\n';
-                    renderChild.call(_.extend({}, scope, res.locals)).should.be.equal(output);
+                    renderChild.call(_.extend({}, fields['field-name'].options[0], res.locals)).should.be.equal(output);
+                    res.locals['input-text'].restore();
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
                 });
 
                 it('accepts a custom partial', function () {
+                    Hogan.compile.restore();
+                    res.locals.partials = {
+                        'partials-custom-partial': 'partials/custom-partial'
+                    };
                     var customPartial = '<div>Custom Partial</div>';
-                    scope.child = 'partials/custom-partial';
-                    sinon.stub(fs, 'readFileSync').returns(customPartial);
-                    renderChild.call(scope).should.be.equal(customPartial);
+                    options[0] = {
+                        child: 'partials/custom-partial'
+                    };
+                    sinon.stub(fs, 'readFileSync')
+                        .withArgs('partials/custom-partial.html')
+                        .returns(customPartial);
+                    renderChild.call(fields['field-name'].options[0]).should.be.equal(customPartial);
                     fs.readFileSync.restore();
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
                 });
             });
 
         });
 
-        describe('Multiple lambdas', function () {
+        describe('checkbox renderChild', function () {
+
             beforeEach(function () {
-                middleware = mixins();
+                middleware = mixins({ 'field-name': {} });
+                middleware(req, res, next);
+                res.locals['checkbox']().call(res.locals, 'field-name');
+                renderChild = render.lastCall.args[0].renderChild;
             });
 
-            it('recursively runs lambdas wrapped in other lambdas correctly', function () {
-                middleware(req, res, next);
-                res.locals.value = '2016-01-01T00:00:00.000Z';
-                var result = res.locals['uppercase']().call(res.locals,
-                    '{{#time}}{{#date}}{{value}}|h:mma on D MMMM YYYY{{/date}}{{/time}}');
-                result.should.equal('MIDNIGHT ON 1 JANUARY 2016');
+            it('is a function', function () {
+                renderChild.should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                renderChild().should.be.a('function');
+            });
+
+            describe('called with child', function () {
+
+                beforeEach(function () {
+                    options = {};
+                    fields = {
+                        'field-name': options,
+                        'child-field-name': {}
+                    };
+                    renderChild = renderChild();
+                });
+
+                it('accepts an HTML template string', function () {
+                    Hogan.compile.restore();
+                    options.child = '<div>{{key}}</div>';
+                    options.key = 'value';
+                    renderChild.call(fields['field-name']).should.be.equal('<div>value</div>');
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
+                });
+
+                it('accepts a template mixin and renders it in a panel', function () {
+                    Hogan.compile.restore();
+                    options.child = 'input-text';
+                    options.toggle = 'child-field-name';
+                    sinon.stub(res.locals, 'input-text').returns(function (key) {
+                        return Hogan.compile('<div>{{key}}</div>').render({ key: key });
+                    });
+                    var output = '<div id="child-field-name-panel" class="reveal js-hidden">';
+                    output += '\n    <div class="panel-indent">\n';
+                    output += '<div>child-field-name</div>';
+                    output += '    </div>';
+                    output += '\n</div>\n';
+                    renderChild.call(_.extend({}, fields['field-name'], res.locals)).should.be.equal(output);
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
+                });
+
+                it('accepts a custom partial', function () {
+                    Hogan.compile.restore();
+                    res.locals.partials = {
+                        'partials-custom-partial': 'partials/custom-partial'
+                    };
+                    var customPartial = '<div>Custom Partial</div>';
+                    options.child = 'partials/custom-partial';
+                    sinon.stub(fs, 'readFileSync')
+                        .withArgs('partials/custom-partial.html')
+                        .returns(customPartial);
+                    renderChild.call(fields['field-name']).should.be.equal(customPartial);
+                    fs.readFileSync.restore();
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
+                });
             });
 
         });
