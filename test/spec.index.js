@@ -1376,7 +1376,7 @@ describe('Template Mixins', function () {
                         return Hogan.compile('<div>{{key}}</div>').render({ key: key });
                     });
                     var output = '<div id="child-field-name-panel" class="reveal js-hidden">';
-                    output += '\n    <div class="panel-indent">\n';
+                    output += '\n    <div class="panel panel-border-narrow">\n';
                     output += '<div>child-field-name</div>';
                     output += '    </div>';
                     output += '\n</div>\n';
@@ -1455,7 +1455,7 @@ describe('Template Mixins', function () {
                         return Hogan.compile('<div>{{key}}</div>').render({ key: key });
                     });
                     var output = '<div id="child-field-name-panel" class="reveal js-hidden">';
-                    output += '\n    <div class="panel-indent">\n';
+                    output += '\n    <div class="panel panel-border-narrow">\n';
                     output += '<div>child-field-name</div>';
                     output += '    </div>';
                     output += '\n</div>\n';
