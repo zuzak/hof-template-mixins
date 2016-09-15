@@ -844,6 +844,7 @@ describe('Template Mixins', function () {
                     return _.isMatch(obj, {
                         label: 'Foo',
                         value: 'foo',
+                        field: 'radio',
                         selected: false,
                         toggle: undefined
                     });
@@ -860,6 +861,18 @@ describe('Template Mixins', function () {
                 res.locals['radio-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
                     className: 'abc def'
+                }));
+            });
+
+            it('should have role: radiogroup', function () {
+                middleware = mixins({
+                    'field-name': {
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    role: 'radiogroup'
                 }));
             });
 
@@ -949,18 +962,39 @@ describe('Template Mixins', function () {
                         options: [{
                             label: 'Foo',
                             value: 'foo'
+                        }, {
+                            label: 'Bar',
+                            value: 'bar'
+                        }, {
+                            label: 'Baz',
+                            value: 'baz'
                         }]
                     }
                 });
                 middleware(req, res, next);
                 res.locals['checkbox-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match(function (value) {
-                    var obj = value.options[0];
-                    return _.isMatch(obj, {
+                    var options = [{
                         label: 'Foo',
                         value: 'foo',
+                        field: 'checkbox',
                         selected: false,
                         toggle: undefined
+                    }, {
+                        label: 'Bar',
+                        value: 'bar',
+                        field: 'checkbox',
+                        selected: false,
+                        toggle: undefined
+                    }, {
+                        label: 'Baz',
+                        value: 'baz',
+                        field: 'checkbox',
+                        selected: false,
+                        toggle: undefined
+                    }];
+                    return _.every(value.options, function (option, index) {
+                        return _.isMatch(option, options[index]);
                     });
                 }));
             });
@@ -975,6 +1009,18 @@ describe('Template Mixins', function () {
                 res.locals['checkbox-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
                     className: 'abc def'
+                }));
+            });
+
+            it('should have role: group', function () {
+                middleware = mixins({
+                    'field-name': {
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['checkbox-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    role: 'group'
                 }));
             });
 
