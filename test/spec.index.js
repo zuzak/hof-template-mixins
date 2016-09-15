@@ -927,6 +927,121 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('checkbox-group', function () {
+
+            beforeEach(function () {
+                middleware = mixins({}, { translate: translate });
+            });
+
+            it('adds a function to res.locals', function () {
+                middleware(req, res, next);
+                res.locals['checkbox-group'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                middleware(req, res, next);
+                res.locals['checkbox-group']().should.be.a('function');
+            });
+
+            it('looks up field options', function () {
+                middleware = mixins({
+                    'field-name': {
+                        options: [{
+                            label: 'Foo',
+                            value: 'foo'
+                        }]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['checkbox-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match(function (value) {
+                    var obj = value.options[0];
+                    return _.isMatch(obj, {
+                        label: 'Foo',
+                        value: 'foo',
+                        selected: false,
+                        toggle: undefined
+                    });
+                }));
+            });
+
+            it('should have classes if one or more were specified against the field', function () {
+                middleware = mixins({
+                    'field-name': {
+                        'className': ['abc', 'def']
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['checkbox-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    className: 'abc def'
+                }));
+            });
+
+            it('adds `legendClassName` if it exists as a string or an array', function () {
+                middleware = mixins({
+                    'field-name-1': {
+                        legend: {
+                            className: 'abc def'
+                        }
+                    },
+                    'field-name-2': {
+                        legend: {
+                            className: ['abc', 'def']
+                        }
+                    }
+                });
+
+                middleware(req, res, next);
+
+                res.locals['checkbox-group']().call(res.locals, 'field-name-1');
+                render.should.have.been.calledWith(sinon.match({
+                    legendClassName: 'abc def'
+                }));
+
+                res.locals['checkbox-group']().call(res.locals, 'field-name-2');
+                render.should.have.been.calledWith(sinon.match({
+                    legendClassName: 'abc def'
+                }));
+            });
+
+            it('uses locales translation for legend if a field value isn\'t provided', function () {
+                var translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['checkbox-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    legend: 'Field legend'
+                }));
+            });
+
+            it('uses locales translation for hint if a field value isn\'t provided', function () {
+                var translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
+                middleware = mixins({
+                    'field-name': {}
+                }, { translate: translate });
+                middleware(req, res, next);
+                res.locals['checkbox-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    hint: 'Field hint'
+                }));
+            });
+
+            it('doesn\'t add a hint if the hint doesn\'t exist in locales', function () {
+                middleware = mixins({
+                    'field-name': {}
+                });
+                middleware(req, res, next);
+                res.locals['checkbox-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWithExactly(sinon.match({
+                    hint: null
+                }));
+            });
+
+        });
+
         describe('select', function () {
 
             beforeEach(function () {
