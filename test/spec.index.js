@@ -844,7 +844,7 @@ describe('Template Mixins', function () {
                     return _.isMatch(obj, {
                         label: 'Foo',
                         value: 'foo',
-                        field: 'radio',
+                        type: 'radio',
                         selected: false,
                         toggle: undefined
                     });
@@ -977,19 +977,19 @@ describe('Template Mixins', function () {
                     var options = [{
                         label: 'Foo',
                         value: 'foo',
-                        field: 'checkbox',
+                        type: 'checkbox',
                         selected: false,
                         toggle: undefined
                     }, {
                         label: 'Bar',
                         value: 'bar',
-                        field: 'checkbox',
+                        type: 'checkbox',
                         selected: false,
                         toggle: undefined
                     }, {
                         label: 'Baz',
                         value: 'baz',
-                        field: 'checkbox',
+                        type: 'checkbox',
                         selected: false,
                         toggle: undefined
                     }];
