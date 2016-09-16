@@ -1,4 +1,4 @@
-<div id="{{key}}-group" class="form-group{{#className}} {{className}} {{/className}}{{#error}} error{{/error}}">
+<div id="{{key}}-group" class="form-group{{#className}} {{className}} {{/className}}{{#error}} validation-error{{/error}}">
     <fieldset role="{{role}}" aria-required="true">
         <legend>
             <span{{#legendClassName}} class="{{legendClassName}}"{{/legendClassName}}>{{legend}}</span>
@@ -8,7 +8,7 @@
         {{#options}}
             <label class="block-label" for="{{key}}-{{value}}">
                 <input
-                    type="{{field}}"
+                    type="{{type}}"
                     name="{{key}}"
                     id="{{key}}-{{value}}"
                     value="{{value}}"
