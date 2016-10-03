@@ -1050,6 +1050,48 @@ describe('Template Mixins', function () {
 
     describe('without stubbed Hogan', function () {
 
+        it('looks up variables within the returned label translation', function () {
+            res.locals.foo = 'bar';
+            var stubbedTranslate = sinon.stub().returns('a label with {{foo}}');
+            middleware = mixins({
+                'field-name': {}
+            }, { translate: stubbedTranslate });
+            middleware(req, res, next);
+            res.locals['input-text']().call(res.locals, 'field-name')
+                .should.contain('a label with bar');
+        });
+
+        describe('t', function () {
+            var stubbedTranslate;
+
+            beforeEach(function () {
+                stubbedTranslate = sinon.stub().returns('');
+                middleware = mixins({}, {
+                    translate: stubbedTranslate
+                });
+                middleware(req, res, next);
+            });
+
+            it('adds a function to res.locals', function () {
+                res.locals['t'].should.be.a('function');
+            });
+
+            it('returns a function', function () {
+                res.locals['t']().should.be.a('function');
+            });
+
+            it('calls translate passing the given key', function () {
+                res.locals['t']().call(res.locals, 'fields.field-1.label');
+                stubbedTranslate.should.have.been.calledOnce.and.calledWithExactly('fields.field-1.label');
+            });
+
+            it('looks up variables in the returned translation', function () {
+                res.locals.foo = 'bar';
+                stubbedTranslate.returns('some text {{foo}}');
+                res.locals['t']().call(res.locals, 'fields.field-1.label').should.be.equal('some text bar');
+            });
+        });
+
         describe('date', function () {
 
             beforeEach(function () {
