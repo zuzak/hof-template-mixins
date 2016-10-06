@@ -1,1 +1,5 @@
-<input type="submit" {{#id}}id="{{id}}"{{/id}} value="{{{value}}}" class="button">
+<input type="submit" {{#id}}id="{{id}}"{{/id}} value="{{{value}}}" class="button"
+{{#attributes}}
+    {{attribute}}="{{value}}"
+{{/attributes}}
+>
