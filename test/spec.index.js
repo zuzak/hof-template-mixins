@@ -953,6 +953,60 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('sets additional element groupClassName', function () {
+                middleware = mixins({
+                    'field-name': {
+                        groupClassName: 'js-gaevent'
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    groupClassName: 'js-gaevent'
+                }));
+            });
+
+            it('sets additional element groupAttributes', function () {
+                middleware = mixins({
+                    'field-name': {
+                        groupAttributes: [
+                            { attribute: 'gakey', value: 'ABCDEFG' }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    groupAttributes: [
+                        { attribute: 'gakey', value: 'ABCDEFG' }
+                    ]
+                }));
+            });
+
+            it('sets additional element field attributes', function () {
+                middleware = mixins({
+                    'field-name': {
+                        options: [
+                            {
+                                attributes: [
+                                    { attribute: 'data-galabel', value: 'XYZ123'},
+                                    { attribute: 'data-gacategory', value: 'Journey'}
+                                ]
+                            }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['radio-group']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match(function (value) {
+                    var array = value.options[0].attributes;
+                    return _.isEqual(array, [
+                        { attribute: 'data-galabel', value: 'XYZ123'},
+                        { attribute: 'data-gacategory', value: 'Journey'}
+                    ]);
+                }));
+            });
+
         });
 
         describe('select', function () {
@@ -1068,6 +1122,60 @@ describe('Template Mixins', function () {
                         toggle: undefined,
                         value: ''
                     });
+                }));
+            });
+
+            it('sets additional element groupClassName', function () {
+                middleware = mixins({
+                    'field-name': {
+                        groupClassName: 'js-gaevent'
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    groupClassName: 'js-gaevent'
+                }));
+            });
+
+            it('sets additional element groupAttributes', function () {
+                middleware = mixins({
+                    'field-name': {
+                        groupAttributes: [
+                            { attribute: 'gakey', value: 'ABCDEFG' }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match({
+                    groupAttributes: [
+                        { attribute: 'gakey', value: 'ABCDEFG' }
+                    ]
+                }));
+            });
+
+            it('sets additional element field attributes', function () {
+                middleware = mixins({
+                    'field-name': {
+                        options: [
+                            {
+                                attributes: [
+                                    { attribute: 'data-galabel', value: 'XYZ123'},
+                                    { attribute: 'data-gacategory', value: 'Journey'}
+                                ]
+                            }
+                        ]
+                    }
+                });
+                middleware(req, res, next);
+                res.locals['select']().call(res.locals, 'field-name');
+                render.should.have.been.calledWith(sinon.match(function (value) {
+                    var array = value.options[0].attributes;
+                    return _.isEqual(array, [
+                        { attribute: 'data-galabel', value: 'XYZ123'},
+                        { attribute: 'data-gacategory', value: 'Journey'}
+                    ]);
                 }));
             });
         });
