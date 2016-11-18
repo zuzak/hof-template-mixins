@@ -1,6 +1,6 @@
 {
-  "name": "hmpo-template-mixins",
-  "version": "4.4.0-rev2",
+  "name": "hof-template-mixins",
+  "version": "0.0.1",
   "description": "A middleware that exposes a series of Mustache mixins on res.locals to ease usage of forms, translations, and some general needs.",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/UKHomeOffice/passports-template-mixins.git"
+    "url": "https://github.com/UKHomeOfficeForms/hof-template-mixins.git"
   },
   "keywords": [
     "middleware",
@@ -28,9 +28,9 @@
   "author": "Seb Insua",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/UKHomeOffice/passports-template-mixins/issues"
+    "url": "https://github.com/UKHomeOfficeForms/hof-template-mixins/issues"
   },
-  "homepage": "https://github.com/UKHomeOffice/passports-template-mixins",
+  "homepage": "https://github.com/UKHomeOfficeForms/hof-template-mixins",
   "dependencies": {
     "hogan.js": "^3.0.2",
     "moment": "^2.13.0",
