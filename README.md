@@ -13,19 +13,23 @@ npm install [--save] hmpo-template-mixins;
 var express = require('express');
 
 var i18n = require('i18n-future');
+var mixins = require('hmpo-template-mixins');
 
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/views'));
 
 app.use(i18n.middleware());
-app.use(require('hmpo-template-mixins')({ sharedTranslationsKey: 'passport.renew' }));
+app.use(mixins());
 
 app.use(function (req, res) {
     // NOTE: res.locals.partials has been set.
-
     res.render('example-template');
 });
 ```
+
+If rendering as part of a hof controller's middleware chain then the field configuration will automatically be set to `res.locals.options.fields` by the controller, and will be loaded from here by the mixins.
+
+Alternatively, if not using hof controllers, you can explicitly set field configuration with instantiating the middleware by passing a `fields` option. This should not be used for dynamic field configuration.
 
 ## Translation
 
@@ -48,6 +52,10 @@ Prefixes keys for translation - Default: ''
 ### translate
 
 Defines a custom translation method - Default: `req.translate`
+
+### fields
+
+Allows for manually setting static field configuration - Default: null
 
 ## Mustache mixins available
 
