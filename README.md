@@ -1,8 +1,6 @@
 # passports-template-mixins
 A middleware that exposes a series of Mustache mixins on `res.locals` to ease usage of forms, translations, and some other things.
 
-It takes in two arguments, a `fields` object containing field configuration, and an [options object](#options).
-
 ## Installation
 
 ```javascript
@@ -16,13 +14,11 @@ var express = require('express');
 
 var i18n = require('i18n-future');
 
-var fields = require('./routes/renew-your-passport/fields');
-
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/views'));
 
 app.use(i18n.middleware());
-app.use(require('hmpo-template-mixins')(fields, { sharedTranslationsKey: 'passport.renew' }));
+app.use(require('hmpo-template-mixins')({ sharedTranslationsKey: 'passport.renew' }));
 
 app.use(function (req, res) {
     // NOTE: res.locals.partials has been set.
