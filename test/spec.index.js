@@ -1543,6 +1543,32 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('renderField', function () {
+
+            var inputTextStub;
+
+            beforeEach(function () {
+                middleware(req, res, next);
+                inputTextStub = sinon.stub();
+                sinon.stub(res.locals, 'input-text').returns(inputTextStub);
+            });
+
+            afterEach(function () {
+                res.locals['input-text'].restore();
+            });
+
+            it('looks up a mixin from res.locals and calls it', function () {
+                var field = {
+                    key: 'my-field',
+                    mixin: 'input-text'
+                };
+                res.locals.renderField().call(field);
+                inputTextStub.should.have.been.calledOnce
+                    .and.calledWith('my-field');
+            });
+
+        });
+
         describe('Multiple lambdas', function () {
 
             it('recursively runs lambdas wrapped in other lambdas correctly', function () {
