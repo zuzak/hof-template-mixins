@@ -1567,6 +1567,25 @@ describe('Template Mixins', function () {
                     .and.calledWith('my-field');
             });
 
+            it('defaults to input-text if mixin omitted', function () {
+                var field = {
+                    key: 'my-field'
+                };
+                res.locals.renderField().call(field);
+                inputTextStub.should.have.been.calledOnce
+                    .and.calledWith('my-field');
+            });
+
+            it('throws an error if an invalid mixin is provided', function () {
+                var field = {
+                    key: 'my-field',
+                    mixin: 'invalid'
+                };
+                expect(function () {
+                    res.locals.renderField().call(field);
+                }).to.throw();
+            });
+
         });
 
         describe('Multiple lambdas', function () {

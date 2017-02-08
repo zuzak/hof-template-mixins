@@ -104,6 +104,8 @@ module.exports = {
 }
 ```
 
+If mixin is omitted `input-text` will be used
+
 ## Options
 
 - `className`: A string or array of string class names.
