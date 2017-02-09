@@ -82,7 +82,29 @@ checkbox-required
 checkbox-group
 input-submit
 textarea
+renderField
 ```
+
+### renderField
+
+The renderField mixin can be called in your template with the field to render as the scope. This will lookup the field.mixin in res.locals and call it passing the field key.
+
+```html
+{{#fields}}
+  {{#renderField}}{{/renderField}}
+{{/fields}}
+```
+
+fields.js
+```js
+module.exports = {
+    'my-field': {
+        mixin: 'input-text'
+    }
+}
+```
+
+If mixin is omitted `input-text` will be used
 
 ## Options
 

@@ -1,8 +1,9 @@
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
-  - "4"
-  - "6"
+- '4'
+- '6'
 notifications:
   email: false
+env:
+  matrix:
+    secure: DEhw3em6QT++xbRV+uS+kzDNhKcaZSre+9QdX7P3WEOs4Vrb9GVzr/4UXObGO/K6xuZi+I1C+asZqnv1lZV8zQzZIUsuBD9KEa+CepUXR1M6cEcr3uZErOEAvzvdphVFQAK31t6pGCW9nA3ffa98cK6Zdq75yyQPh5wad39htJmofu0+OLhyqzB0lDmA4DXVBXH/NtLZG4SePOpgU9A3P2NlX5PBUBuUVtPLVwvqEFiuhkEzAZ/rRi+un4ntelNHqXVIbU+TavM120I7x9sDD+MfwYl1bJVuFvmqT5eSLv4G5qnh44avitXX4TFCuXM8dRDc/9lLlhH1gq1tePyuQLOJ2iZ2BaiR9Ih6SitVK8SPGNVWR191Ftzr1ZdfEUCSvqWP1Oc+p451ZADM2MprDUu47cDyLeWwjCJ4LM00bv+jvJlM+BkgjpbjNrsLPsJg+ulFnRk5qkZ94bzrNefdFclmZgCFzIXEVALFNUqK8FZzXuxfXxb6NVbmc2CMsxNfT6s2jzukC8o075TTF9uN6ATVtfBLHkN+AiCOgVAUqlJEt/1mGoVh74jrHHNU0UA8SBtLAGn15JzkYYUqHFX5qkU8PId0VzdDQWgtb7vx9ug6GC6zNmWpSXn+y14PcDlWJMKFJjc5XugETKERuaiWOCtGaDhFoDPoZYjyIfgi7HA=
