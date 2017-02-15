@@ -1557,6 +1557,15 @@ describe('Template Mixins', function () {
                 res.locals['input-text'].restore();
             });
 
+            it('returns the field\'s html if defined', function () {
+                var html = '<div>Prerendered HTML</div>';
+                var field = {
+                    key: 'date-field',
+                    html: html
+                };
+                res.locals.renderField().call(field).should.be.equal(html);
+            });
+
             it('looks up a mixin from res.locals and calls it', function () {
                 var field = {
                     key: 'my-field',
