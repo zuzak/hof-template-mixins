@@ -1576,6 +1576,17 @@ describe('Template Mixins', function () {
                     .and.calledWith('my-field');
             });
 
+            it('uses the field from the fields config if a key is passed', function () {
+                var options = {
+                    fields: [
+                        { key: 'some-field' }
+                    ]
+                };
+                res.locals.renderField().call(options, 'some-field');
+                inputTextStub.should.have.been.calledOnce
+                    .and.calledWith('some-field');
+            });
+
             it('defaults to input-text if mixin omitted', function () {
                 var field = {
                     key: 'my-field'
@@ -1592,6 +1603,17 @@ describe('Template Mixins', function () {
                 };
                 expect(function () {
                     res.locals.renderField().call(field);
+                }).to.throw();
+            });
+
+            it('throws an error if called with an undefined field', function () {
+                var options = {
+                    fields: [
+                        { key: 'some-field' }
+                    ]
+                };
+                expect(function () {
+                    res.locals.renderField().call(options, 'not-a-field');
                 }).to.throw();
             });
 
