@@ -1587,6 +1587,15 @@ describe('Template Mixins', function () {
                     .and.calledWith('some-field');
             });
 
+            it('uses the field from res.locals if a key is passed and no `fields` exist in local scope', function () {
+                res.locals.fields = [
+                    { key: 'some-field' }
+                ];
+                res.locals.renderField().call({}, 'some-field');
+                inputTextStub.should.have.been.calledOnce
+                    .and.calledWith('some-field');
+            });
+
             it('defaults to input-text if mixin omitted', function () {
                 var field = {
                     key: 'my-field'
