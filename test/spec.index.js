@@ -1557,6 +1557,15 @@ describe('Template Mixins', function () {
                 res.locals['input-text'].restore();
             });
 
+            it('returns null if disableRender is set to true', function () {
+                var field = {
+                    key: 'my-field',
+                    mixin: 'input-text',
+                    disableRender: true
+                };
+                expect(res.locals.renderField().call(field)).to.be.equal(null);
+            });
+
             it('returns the field\'s html if defined', function () {
                 var html = '<div>Prerendered HTML</div>';
                 var field = {
@@ -1703,6 +1712,27 @@ describe('Template Mixins', function () {
                         key: 'value'
                     };
                     renderChild.call(fields['field-name'].options[0]).should.be.equal('<h1>Title</h1>\n<p>The content</p>\n');
+                    sinon.stub(Hogan, 'compile').returns({
+                        render: render
+                    });
+                });
+
+                it('renders raw html in a panel if specified', function () {
+                    Hogan.compile.restore();
+                    options[0] = {
+                        child: 'html',
+                        toggle: 'child-field-name'
+                    };
+                    res.locals.fields = [
+                        {
+                            key: 'child-field-name',
+                            html: '<div>some html</div>'
+                        }
+                    ];
+                    middleware(req, res, next);
+                    res.locals['radio-group']().call(res.locals, 'field-name');
+                    renderChild = render.lastCall.args[0].renderChild();
+                    renderChild.call(fields['field-name'].options[0]).should.be.equal('<div id="child-field-name-panel" class="reveal js-hidden">\n    <div class="panel-indent">\n<div>some html</div>    </div>\n</div>\n');
                     sinon.stub(Hogan, 'compile').returns({
                         render: render
                     });
