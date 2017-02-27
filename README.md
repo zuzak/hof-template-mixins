@@ -87,7 +87,7 @@ renderField
 ```
 
 ### qs
-This mixin takes a `key=value` query string and returns the current url with the query string appended. Any existing query string params are preserved unless a conflicting key is found, in which case the value given to the mixin will be used.
+This mixin takes a `key=value` query string and returns a query string with the extra params appended. If the key is already present in the query string, the value passed to the mixin is used
 
 ```html
 <a href="{{#qs}}key=value{{/qs}}">Click to append query</a>
