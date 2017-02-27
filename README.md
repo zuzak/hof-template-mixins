@@ -82,15 +82,15 @@ checkbox-required
 checkbox-group
 input-submit
 textarea
-appendQuery
+qs
 renderField
 ```
 
-### appendQuery
+### qs
 This mixin takes a `key=value` query string and returns the current url with the query string appended. Any existing query string params are preserved unless a conflicting key is found, in which case the value given to the mixin will be used.
 
 ```html
-<a href="{{#appendQuery}}key=value{{/appendQuery}}">Click to append query</a>
+<a href="{{#qs}}key=value{{/qs}}">Click to append query</a>
 ```
 
 ### renderField

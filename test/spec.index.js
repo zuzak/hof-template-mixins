@@ -1543,7 +1543,7 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('appendQuery', function () {
+        describe('qs', function () {
             beforeEach(function () {
                 middleware(req, res, next);
             });
@@ -1551,7 +1551,7 @@ describe('Template Mixins', function () {
             it('appends the passed query to the url query string', function () {
                 req.url = '/path?a=b';
                 req.query = { a: 'b' };
-                res.locals.appendQuery().call(res.locals, 'c=d').should.equal('/path?a=b&c=d');
+                res.locals.qs().call(res.locals, 'c=d').should.equal('/path?a=b&c=d');
             });
         });
 
