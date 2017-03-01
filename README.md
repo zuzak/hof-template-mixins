@@ -82,7 +82,15 @@ checkbox-required
 checkbox-group
 input-submit
 textarea
+qs
 renderField
+```
+
+### qs
+This mixin takes a `key=value` query string and returns a query string with the extra params appended. If the key is already present in the query string, the value passed to the mixin is used
+
+```html
+<a href="{{#qs}}key=value{{/qs}}">Click to append query</a>
 ```
 
 ### renderField

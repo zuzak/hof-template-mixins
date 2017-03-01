@@ -1543,6 +1543,17 @@ describe('Template Mixins', function () {
 
         });
 
+        describe('qs', function () {
+            beforeEach(function () {
+                middleware(req, res, next);
+            });
+
+            it('appends the passed query to the url query string', function () {
+                req.query = { a: 'b' };
+                res.locals.qs().call(res.locals, 'c=d').should.equal('?a=b&c=d');
+            });
+        });
+
         describe('renderField', function () {
 
             var inputTextStub;
