@@ -4,16 +4,14 @@ var _ = require('underscore');
 var Hogan = require('hogan.js');
 var fs = require('fs');
 
-function translate(key) {
-    return key;
-}
-
 describe('Template Mixins', function () {
 
     var req, res, next, render, middleware;
 
     beforeEach(function () {
-        req = {};
+        req = {
+            translate: function (a) { return a; }
+        };
         res = {
             locals: {
                 options: {
@@ -22,6 +20,7 @@ describe('Template Mixins', function () {
             }
         };
         next = sinon.stub();
+        middleware = mixins();
     });
 
     it('returns a middleware', function () {
@@ -43,6 +42,7 @@ describe('Template Mixins', function () {
                     render: render.returns(text)
                 };
             });
+            middleware = mixins();
         });
 
         afterEach(function () {
@@ -50,10 +50,6 @@ describe('Template Mixins', function () {
         });
 
         describe('input-text', function () {
-
-            beforeEach(function () {
-                middleware = mixins({ translate: translate });
-            });
 
             it('adds a function to res.locals', function () {
                 middleware(req, res, next);
@@ -108,7 +104,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins({ translate: translate, sharedTranslationsKey: 'name.space' });
+                middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -166,13 +162,12 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                var translate = sinon.stub().withArgs('field-name.label').returns('Field name');
+                req.translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 res.locals.options.fields = {
                     'field-name': {
                         'label': 'field-name.label'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['input-phone']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -181,12 +176,11 @@ describe('Template Mixins', function () {
             });
 
             it('includes a hint if it is defined in the locales', function () {
-                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
+                req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -195,13 +189,12 @@ describe('Template Mixins', function () {
             });
 
             it('includes a hint if it is defined in translation', function () {
-                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
+                req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
                         'hint': 'field-name.hint'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -210,13 +203,12 @@ describe('Template Mixins', function () {
             });
 
             it('does not include a hint if it is not defined in translation', function () {
-                var translate = sinon.stub().withArgs('field-name.hint').returns(null);
+                req.translate = sinon.stub().withArgs('field-name.hint').returns(null);
                 res.locals.options.fields = {
                     'field-name': {
                         'hint': 'field-name.hint'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -344,10 +336,6 @@ describe('Template Mixins', function () {
         });
 
         describe('input-date', function () {
-
-            beforeEach(function () {
-                middleware = mixins({ translate: translate });
-            });
 
             it('adds a function to res.locals', function () {
                 middleware(req, res, next);
@@ -514,7 +502,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins({ translate: translate, sharedTranslationsKey: 'name.space' });
+                middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
@@ -541,13 +529,13 @@ describe('Template Mixins', function () {
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
-                render.getCall(2).should.have.been.calledWithExactly(sinon.match({
+                render.getCall(2).should.have.been.calledWith(sinon.match({
                     date: true
                 }));
-                render.getCall(4).should.have.been.calledWithExactly(sinon.match({
+                render.getCall(4).should.have.been.calledWith(sinon.match({
                     date: true
                 }));
-                render.getCall(6).should.have.been.calledWithExactly(sinon.match({
+                render.getCall(6).should.have.been.calledWith(sinon.match({
                     date: true
                 }));
             });
@@ -555,10 +543,6 @@ describe('Template Mixins', function () {
         });
 
         describe('input-number', function () {
-
-            beforeEach(function () {
-                middleware = mixins({ translate: translate });
-            });
 
             it('adds a function to res.locals', function () {
                 middleware(req, res, next);
@@ -573,7 +557,7 @@ describe('Template Mixins', function () {
             it('adds a pattern attribute to trigger the number keypad on mobile devices', function () {
                 middleware(req, res, next);
                 res.locals['input-number']().call(res.locals, 'field-name');
-                render.should.have.been.calledWithExactly(sinon.match({
+                render.should.have.been.calledWith(sinon.match({
                     pattern: '[0-9]*'
                 }));
             });
@@ -581,10 +565,6 @@ describe('Template Mixins', function () {
         });
 
         describe('input-submit', function () {
-
-            beforeEach(function () {
-                middleware = mixins({ translate: translate });
-            });
 
             it('adds a function to res.locals', function () {
                 middleware(req, res, next);
@@ -613,7 +593,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins({ translate: translate, sharedTranslationsKey: 'name.space' });
+                middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-submit']().call(res.locals, 'button-id');
                 render.should.have.been.calledWith(sinon.match({
@@ -624,10 +604,6 @@ describe('Template Mixins', function () {
         });
 
         describe('textarea', function () {
-
-            beforeEach(function () {
-                middleware = mixins({ translate: translate });
-            });
 
             it('adds a function to res.locals', function () {
                 middleware(req, res, next);
@@ -648,7 +624,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins({ translate: translate, sharedTranslationsKey: 'name.space' });
+                middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals.textarea().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -685,13 +661,12 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                var translate = sinon.stub().withArgs('field-name.label').returns('Field name');
+                req.translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 res.locals.options.fields = {
                     'field-name': {
                         'label': 'field-name.label'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals.textarea().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -760,7 +735,6 @@ describe('Template Mixins', function () {
         describe('checkbox', function () {
 
             beforeEach(function () {
-                middleware = mixins({ translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -782,7 +756,7 @@ describe('Template Mixins', function () {
             });
 
             it('prefixes translation lookup with namespace if provided', function () {
-                middleware = mixins({ translate: translate, sharedTranslationsKey: 'name.space' });
+                middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -791,13 +765,12 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation property', function () {
-                var translate = sinon.stub().withArgs('field-name.label').returns('Field name');
+                req.translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 res.locals.options.fields = {
                     'field-name': {
                         'label': 'field-name.label'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -831,7 +804,6 @@ describe('Template Mixins', function () {
         describe('radio-group', function () {
 
             beforeEach(function () {
-                middleware = mixins({ translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -948,11 +920,10 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation for legend if a field value isn\'t provided', function () {
-                var translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
+                req.translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
                 res.locals.options.fields = {
                     'field-name': {}
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['radio-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWithExactly(sinon.match({
@@ -961,11 +932,10 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation for hint if a field value isn\'t provided', function () {
-                var translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
+                req.translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {}
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['radio-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWithExactly(sinon.match({
@@ -989,7 +959,6 @@ describe('Template Mixins', function () {
         describe('checkbox-group', function () {
 
             beforeEach(function () {
-                middleware = mixins({ translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -1098,11 +1067,10 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation for legend if a field value isn\'t provided', function () {
-                var translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
+                req.translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
                 res.locals.options.fields = {
                     'field-name': {}
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['checkbox-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWithExactly(sinon.match({
@@ -1111,11 +1079,10 @@ describe('Template Mixins', function () {
             });
 
             it('uses locales translation for hint if a field value isn\'t provided', function () {
-                var translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
+                req.translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {}
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['checkbox-group']().call(res.locals, 'field-name');
                 render.should.have.been.calledWithExactly(sinon.match({
@@ -1206,7 +1173,6 @@ describe('Template Mixins', function () {
         describe('select', function () {
 
             beforeEach(function () {
-                middleware = mixins({ translate: translate });
             });
 
             it('adds a function to res.locals', function () {
@@ -1257,12 +1223,11 @@ describe('Template Mixins', function () {
             });
 
             it('includes a hint if it is defined in the locales', function () {
-                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
+                req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['select']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -1271,13 +1236,12 @@ describe('Template Mixins', function () {
             });
 
             it('includes a hint if it is defined in translation', function () {
-                var translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
+                req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
                         'hint': 'field-name.hint'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['select']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -1286,13 +1250,12 @@ describe('Template Mixins', function () {
             });
 
             it('does not include a hint if it is not defined in translation', function () {
-                var translate = sinon.stub().withArgs('field-name.hint').returns(null);
+                req.translate = sinon.stub().withArgs('field-name.hint').returns(null);
                 res.locals.options.fields = {
                     'field-name': {
                         'hint': 'field-name.hint'
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['select']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -1301,7 +1264,7 @@ describe('Template Mixins', function () {
             });
 
             it('sets labels to an empty string for translations that are returned as `undefined`', function () {
-                var translate = sinon.stub().returns(undefined);
+                req.translate = sinon.stub().returns(undefined);
                 res.locals.options.fields = {
                     'field-name': {
                         options: [
@@ -1309,7 +1272,6 @@ describe('Template Mixins', function () {
                         ]
                     }
                 };
-                middleware = mixins({ translate: translate });
                 middleware(req, res, next);
                 res.locals['select']().call(res.locals, 'field-name');
                 render.lastCall.should.have.been.calledWith(sinon.match(function (value) {
@@ -1327,10 +1289,6 @@ describe('Template Mixins', function () {
     });
 
     describe('without stubbed Hogan', function () {
-
-        beforeEach(function () {
-            middleware = mixins();
-        });
 
         it('looks up variables within the field key', function () {
             res.locals.foo= 'bar';
