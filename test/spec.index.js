@@ -3,15 +3,16 @@ var mixins = require('../lib/template-mixins');
 var _ = require('underscore');
 var Hogan = require('hogan.js');
 var fs = require('fs');
+var reqres = require('reqres');
 
 describe('Template Mixins', function () {
 
     var req, res, next, render, middleware;
 
     beforeEach(function () {
-        req = {
+        req = reqres.req({
             translate: function (a) { return a; }
-        };
+        });
         res = {
             locals: {
                 options: {
