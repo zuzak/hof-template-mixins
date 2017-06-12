@@ -217,11 +217,11 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets `labelClassName` to "form-label-bold" by default', function () {
+            it('sets `labelClassName` to "form-label" by default', function () {
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
-                    labelClassName: 'form-label-bold'
+                    labelClassName: 'form-label'
                 }));
             });
 
@@ -675,14 +675,14 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets `labelClassName` to "form-label-bold" by default', function () {
+            it('sets `labelClassName` to "form-label" by default', function () {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
                 middleware(req, res, next);
                 res.locals['textarea']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
-                    labelClassName: 'form-label-bold'
+                    labelClassName: 'form-label'
                 }));
             });
 
@@ -1186,14 +1186,14 @@ describe('Template Mixins', function () {
                 res.locals['select']().should.be.a('function');
             });
 
-            it('defaults `labelClassName` to "form-label-bold"', function () {
+            it('defaults `labelClassName` to "form-label"', function () {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
                 middleware(req, res, next);
                 res.locals['select']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
-                    labelClassName: 'form-label-bold'
+                    labelClassName: 'form-label'
                 }));
             });
 
