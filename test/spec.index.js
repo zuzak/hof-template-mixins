@@ -388,6 +388,29 @@ describe('Template Mixins', function () {
                 }));
             });
 
+            it('form-group-year class is set to the year field by default', function () {
+                middleware(req, res, next);
+                res.locals['input-date']().call(res.locals, 'field-name');
+
+                render.called;
+
+                var dayCall = render.getCall(2),
+                    monthCall = render.getCall(4),
+                    yearCall = render.getCall(6);
+
+                dayCall.should.not.have.been.calledWith(sinon.match({
+                    formGroupClassName: 'form-group-year'
+                }));
+
+                monthCall.should.not.have.been.calledWith(sinon.match({
+                    formGroupClassName: 'form-group-year'
+                }));
+
+                yearCall.should.have.been.calledWith(sinon.match({
+                    formGroupClassName: 'form-group-year'
+                }));
+            });
+
             describe('autocomplete', function () {
 
                 it('should have a sufix of -day -month and -year', function () {
