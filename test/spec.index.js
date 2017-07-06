@@ -1,17 +1,23 @@
-var path = require('path');
-var mixins = require('..');
-var _ = require('underscore');
-var Hogan = require('hogan.js');
-var fs = require('fs');
-var reqres = require('reqres');
+'use strict';
 
-describe('Template Mixins', function () {
+const path = require('path');
+const mixins = require('..');
+const _ = require('underscore');
+const Hogan = require('hogan.js');
+const fs = require('fs');
+const reqres = require('reqres');
 
-    var req, res, next, render, middleware;
+describe('Template Mixins', () => {
 
-    beforeEach(function () {
+    let req;
+    let res;
+    let next;
+    let render;
+    let middleware;
+
+    beforeEach(() => {
         req = reqres.req({
-            translate: function (a) { return a; }
+            translate: a => a
         });
         res = {
             locals: {
@@ -24,7 +30,7 @@ describe('Template Mixins', function () {
         middleware = mixins();
     });
 
-    it('returns a middleware', function () {
+    it('returns a middleware', () => {
         mixins().should.be.a('function');
         mixins().length.should.equal(3);
     });
@@ -33,9 +39,9 @@ describe('Template Mixins', function () {
         mixins()(req, res, done);
     });
 
-    describe('with stubbed Hogan', function () {
+    describe('with stubbed Hogan', () => {
 
-        beforeEach(function () {
+        beforeEach(() => {
             render = sinon.stub();
             sinon.stub(Hogan, 'compile', function (text) {
                 return {
@@ -45,23 +51,23 @@ describe('Template Mixins', function () {
             middleware = mixins();
         });
 
-        afterEach(function () {
+        afterEach(() => {
             Hogan.compile.restore();
         });
 
-        describe('input-text', function () {
+        describe('input-text', () => {
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['input-text'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['input-text']().should.be.a('function');
             });
 
-            it('looks up field label', function () {
+            it('looks up field label', () => {
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -69,7 +75,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('looks up default field label if nothing is set', function () {
+            it('looks up default field label if nothing is set', () => {
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -77,7 +83,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('passes child from field config', function () {
+            it('passes child from field config', () => {
                 middleware(req, res, next);
                 res.locals.options.fields = {
                     'field-name': {
@@ -90,7 +96,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses label when available for the field', function () {
+            it('uses label when available for the field', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         label: 'Label text'
@@ -103,7 +109,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('prefixes translation lookup with namespace if provided', function () {
+            it('prefixes translation lookup with namespace if provided', () => {
                 middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
@@ -112,7 +118,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should have an autocomplete setting if specified', function () {
+            it('should have an autocomplete setting if specified', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'autocomplete': 'custom'
@@ -125,7 +131,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should default to no autocomplete attribute ', function () {
+            it('should default to no autocomplete attribute ', () => {
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -133,7 +139,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should have classes if one or more were specified against the field', function () {
+            it('should have classes if one or more were specified against the field', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'className': ['abc', 'def']
@@ -146,7 +152,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses maxlength property set at a field level over default option', function () {
+            it('uses maxlength property set at a field level over default option', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'validate': [
@@ -161,7 +167,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation property', function () {
+            it('uses locales translation property', () => {
                 req.translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 res.locals.options.fields = {
                     'field-name': {
@@ -175,7 +181,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('includes a hint if it is defined in the locales', function () {
+            it('includes a hint if it is defined in the locales', () => {
                 req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
@@ -188,7 +194,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('includes a hint if it is defined in translation', function () {
+            it('includes a hint if it is defined in translation', () => {
                 req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
@@ -202,7 +208,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('does not include a hint if it is not defined in translation', function () {
+            it('does not include a hint if it is not defined in translation', () => {
                 req.translate = sinon.stub().withArgs('field-name.hint').returns(null);
                 res.locals.options.fields = {
                     'field-name': {
@@ -216,7 +222,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets `labelClassName` to "form-label" by default', function () {
+            it('sets `labelClassName` to "form-label" by default', () => {
                 middleware(req, res, next);
                 res.locals['input-text']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -224,7 +230,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('overrides `labelClassName` when set in field options', function () {
+            it('overrides `labelClassName` when set in field options', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         labelClassName: 'visuallyhidden'
@@ -237,7 +243,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets all classes of `labelClassName` option', function () {
+            it('sets all classes of `labelClassName` option', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         labelClassName: ['abc', 'def']
@@ -250,7 +256,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets additional element attributes', function () {
+            it('sets additional element attributes', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         attributes: [
@@ -267,7 +273,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('allows configuration of a non-required input with a visuallyhidden label', function () {
+            it('allows configuration of a non-required input with a visuallyhidden label', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         required: false,
@@ -282,7 +288,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('by default, assumes the field isn\'t required', function () {
+            it('by default, assumes the field isn\'t required', () => {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
@@ -293,7 +299,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('allows configuration of required status with the required property', function () {
+            it('allows configuration of required status with the required property', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         required: true
@@ -306,7 +312,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('allows configuration of required status with the required validator', function () {
+            it('allows configuration of required status with the required validator', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         validate: ['required']
@@ -319,7 +325,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('the required property takes precedence over the required validator', function () {
+            it('the required property takes precedence over the required validator', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         required: false,
@@ -335,25 +341,25 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('input-date', function () {
+        describe('input-date', () => {
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['input-date'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['input-date']().should.be.a('function');
             });
 
-            it('renders 7 times if the field is not marked as inexact', function () {
+            it('renders 7 times if the field is not marked as inexact', () => {
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
                 render.callCount.should.be.equal(7);
             });
 
-            it('renders 5 times if the field is marked as inexact', function () {
+            it('renders 5 times if the field is marked as inexact', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'inexact': true
@@ -364,15 +370,15 @@ describe('Template Mixins', function () {
                 render.callCount.should.be.equal(5);
             });
 
-            it('looks up field label', function () {
+            it('looks up field label', () => {
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
                 render.called;
 
-                var dayCall = render.getCall(2),
-                    monthCall = render.getCall(4),
-                    yearCall = render.getCall(6);
+                const dayCall = render.getCall(2);
+                const monthCall = render.getCall(4);
+                const yearCall = render.getCall(6);
 
                 dayCall.should.have.been.calledWith(sinon.match({
                     label: 'fields.field-name-day.label'
@@ -387,15 +393,15 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('form-group-year class is set to the year field by default', function () {
+            it('form-group-year class is set to the year field by default', () => {
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
                 render.called;
 
-                var dayCall = render.getCall(2),
-                    monthCall = render.getCall(4),
-                    yearCall = render.getCall(6);
+                const dayCall = render.getCall(2);
+                const monthCall = render.getCall(4);
+                const yearCall = render.getCall(6);
 
                 dayCall.should.not.have.been.calledWith(sinon.match({
                     formGroupClassName: 'form-group-year'
@@ -410,9 +416,9 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            describe('autocomplete', function () {
+            describe('autocomplete', () => {
 
-                it('should have a sufix of -day -month and -year', function () {
+                it('should have a suffix of -day -month and -year', () => {
                     res.locals.options.fields = {
                         'field-name': {
                             'autocomplete': 'bday'
@@ -421,11 +427,11 @@ describe('Template Mixins', function () {
                     middleware(req, res, next);
                     res.locals['input-date']().call(res.locals, 'field-name');
 
-                    render.called;
+                    render.should.have.been.called;
 
-                    var dayCall = render.getCall(2),
-                        monthCall = render.getCall(4),
-                        yearCall = render.getCall(6);
+                    const dayCall = render.getCall(2);
+                    const monthCall = render.getCall(4);
+                    const yearCall = render.getCall(6);
 
                     dayCall.should.have.been.calledWith(sinon.match({
                         autocomplete: 'bday-day'
@@ -440,7 +446,7 @@ describe('Template Mixins', function () {
                     }));
                 });
 
-                it('should be set as exact values if an object is given', function () {
+                it('should be set as exact values if an object is given', () => {
                     res.locals.options.fields = {
                         'field-name': {
                             'autocomplete': {
@@ -455,9 +461,9 @@ describe('Template Mixins', function () {
 
                     render.called;
 
-                    var dayCall = render.getCall(2),
-                        monthCall = render.getCall(4),
-                        yearCall = render.getCall(6);
+                    const dayCall = render.getCall(2);
+                    const monthCall = render.getCall(4);
+                    const yearCall = render.getCall(6);
 
                     dayCall.should.have.been.calledWith(sinon.match({
                         autocomplete: 'day-type'
@@ -472,7 +478,7 @@ describe('Template Mixins', function () {
                     }));
                 });
 
-                it('should set autocomplete to off if off is specified', function () {
+                it('should set autocomplete to off if off is specified', () => {
                     res.locals.options.fields = {
                         'field-name': {
                             'autocomplete': 'off'
@@ -483,9 +489,9 @@ describe('Template Mixins', function () {
 
                     render.called;
 
-                    var dayCall = render.getCall(2),
-                        monthCall = render.getCall(4),
-                        yearCall = render.getCall(6);
+                    const dayCall = render.getCall(2);
+                    const monthCall = render.getCall(4);
+                    const yearCall = render.getCall(6);
 
                     dayCall.should.have.been.calledWith(sinon.match({
                         autocomplete: 'off'
@@ -500,15 +506,15 @@ describe('Template Mixins', function () {
                     }));
                 });
 
-                it('should default to no attribute across all date fields', function () {
+                it('should default to no attribute across all date fields', () => {
                     middleware(req, res, next);
                     res.locals['input-date']().call(res.locals, 'field-name');
 
                     render.called;
 
-                    var dayCall = render.getCall(0),
-                        monthCall = render.getCall(1),
-                        yearCall = render.getCall(2);
+                    const dayCall = render.getCall(0);
+                    const monthCall = render.getCall(1);
+                    const yearCall = render.getCall(2);
 
                     dayCall.should.have.been.calledWith(sinon.match({
                         autocomplete: undefined
@@ -524,16 +530,16 @@ describe('Template Mixins', function () {
                 });
             });
 
-            it('prefixes translation lookup with namespace if provided', function () {
+            it('prefixes translation lookup with namespace if provided', () => {
                 middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
                 render.called;
 
-                var dayCall = render.getCall(2),
-                    monthCall = render.getCall(4),
-                    yearCall = render.getCall(6);
+                const dayCall = render.getCall(2);
+                const monthCall = render.getCall(4);
+                const yearCall = render.getCall(6);
 
                 dayCall.should.have.been.calledWith(sinon.match({
                     label: 'name.space.fields.field-name-day.label'
@@ -548,7 +554,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets a date boolean to conditionally show input errors', function () {
+            it('sets a date boolean to conditionally show input errors', () => {
                 middleware(req, res, next);
                 res.locals['input-date']().call(res.locals, 'field-name');
 
@@ -565,19 +571,19 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('input-number', function () {
+        describe('input-number', () => {
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['input-number'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['input-number']().should.be.a('function');
             });
 
-            it('adds a pattern attribute to trigger the number keypad on mobile devices', function () {
+            it('adds a pattern attribute to trigger the number keypad on mobile devices', () => {
                 middleware(req, res, next);
                 res.locals['input-number']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -587,19 +593,19 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('input-submit', function () {
+        describe('input-submit', () => {
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['input-submit'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['input-submit']().should.be.a('function');
             });
 
-            it('looks up button value with default key of "next"', function () {
+            it('looks up button value with default key of "next"', () => {
                 middleware(req, res, next);
                 res.locals['input-submit']().call(res.locals);
                 render.should.have.been.calledWith(sinon.match({
@@ -607,7 +613,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('looks up button value with key if provided', function () {
+            it('looks up button value with key if provided', () => {
                 middleware(req, res, next);
                 res.locals['input-submit']().call(res.locals, 'button-id');
                 render.should.have.been.calledWith(sinon.match({
@@ -615,7 +621,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('prefixes translation lookup with namespace if provided', function () {
+            it('prefixes translation lookup with namespace if provided', () => {
                 middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['input-submit']().call(res.locals, 'button-id');
@@ -626,19 +632,19 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('textarea', function () {
+        describe('textarea', () => {
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals.textarea.should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals.textarea().should.be.a('function');
             });
 
-            it('looks up field label', function () {
+            it('looks up field label', () => {
                 middleware(req, res, next);
                 res.locals.textarea().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -646,7 +652,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('prefixes translation lookup with namespace if provided', function () {
+            it('prefixes translation lookup with namespace if provided', () => {
                 middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals.textarea().call(res.locals, 'field-name');
@@ -655,7 +661,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should have classes if one or more were specified against the field', function () {
+            it('should have classes if one or more were specified against the field', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'className': ['abc', 'def']
@@ -668,7 +674,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses maxlength property set at a field level over default option', function () {
+            it('uses maxlength property set at a field level over default option', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'validate': [
@@ -683,7 +689,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation property', function () {
+            it('uses locales translation property', () => {
                 req.translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 res.locals.options.fields = {
                     'field-name': {
@@ -697,7 +703,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets `labelClassName` to "form-label" by default', function () {
+            it('sets `labelClassName` to "form-label" by default', () => {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
@@ -708,7 +714,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('overrides `labelClassName` when set in field options', function () {
+            it('overrides `labelClassName` when set in field options', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'labelClassName': 'visuallyhidden'
@@ -721,7 +727,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets all classes of `labelClassName` option', function () {
+            it('sets all classes of `labelClassName` option', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         labelClassName: ['abc', 'def']
@@ -734,7 +740,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets additional element attributes', function () {
+            it('sets additional element attributes', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         attributes: [
@@ -755,22 +761,22 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('checkbox', function () {
+        describe('checkbox', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['checkbox'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['checkbox']().should.be.a('function');
             });
 
-            it('looks up field label', function () {
+            it('looks up field label', () => {
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -778,7 +784,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('prefixes translation lookup with namespace if provided', function () {
+            it('prefixes translation lookup with namespace if provided', () => {
                 middleware = mixins({ sharedTranslationsKey: 'name.space' });
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
@@ -787,7 +793,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation property', function () {
+            it('uses locales translation property', () => {
                 req.translate = sinon.stub().withArgs('field-name.label').returns('Field name');
                 res.locals.options.fields = {
                     'field-name': {
@@ -801,7 +807,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should default className `block-label`', function () {
+            it('should default className `block-label`', () => {
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 render.should.have.been.calledWith(sinon.match({
@@ -809,7 +815,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should override default className if one was specified against the field', function () {
+            it('should override default className if one was specified against the field', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'className': 'overwritten'
@@ -824,22 +830,22 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('radio-group', function () {
+        describe('radio-group', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['radio-group'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['radio-group']().should.be.a('function');
             });
 
-            it('looks up field options', function () {
+            it('looks up field options', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         options: [{
@@ -862,7 +868,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('looks up field label from fields.field-name.options.foo.label if not specified', function () {
+            it('looks up field label from fields.field-name.options.foo.label if not specified', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         options: ['foo', 'bar']
@@ -874,7 +880,7 @@ describe('Template Mixins', function () {
                 render.lastCall.args[0].options[1].label.should.be.equal('fields.field-name.options.bar.label');
             });
 
-            it('looks up field label from fields.field-name.options.foo.label if not specified (object options)', function () {
+            it('looks up field label from fields.field-name.options.foo.label if not specified (object options)', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         options: [{
@@ -890,7 +896,7 @@ describe('Template Mixins', function () {
                 render.lastCall.args[0].options[1].label.should.be.equal('fields.field-name.options.bar.label');
             });
 
-            it('should have classes if one or more were specified against the field', function () {
+            it('should have classes if one or more were specified against the field', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'className': ['abc', 'def']
@@ -903,7 +909,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should have role: radiogroup', function () {
+            it('should have role: radiogroup', () => {
                 res.locals.options.fields = {
                     'field-name': {
                     }
@@ -915,7 +921,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('adds `legendClassName` if it exists as a string or an array', function () {
+            it('adds `legendClassName` if it exists as a string or an array', () => {
                 res.locals.options.fields = {
                     'field-name-1': {
                         legend: {
@@ -942,7 +948,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation for legend if a field value isn\'t provided', function () {
+            it('uses locales translation for legend if a field value isn\'t provided', () => {
                 req.translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
                 res.locals.options.fields = {
                     'field-name': {}
@@ -954,7 +960,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation for hint if a field value isn\'t provided', function () {
+            it('uses locales translation for hint if a field value isn\'t provided', () => {
                 req.translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {}
@@ -966,7 +972,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('doesn\'t add a hint if the hint doesn\'t exist in locales', function () {
+            it('doesn\'t add a hint if the hint doesn\'t exist in locales', () => {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
@@ -979,22 +985,22 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('checkbox-group', function () {
+        describe('checkbox-group', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['checkbox-group'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['checkbox-group']().should.be.a('function');
             });
 
-            it('looks up field options', function () {
+            it('looks up field options', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         options: [{
@@ -1037,7 +1043,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should have classes if one or more were specified against the field', function () {
+            it('should have classes if one or more were specified against the field', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         'className': ['abc', 'def']
@@ -1050,7 +1056,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('should have role: group', function () {
+            it('should have role: group', () => {
                 res.locals.options.fields = {
                     'field-name': {
                     }
@@ -1062,7 +1068,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('adds `legendClassName` if it exists as a string or an array', function () {
+            it('adds `legendClassName` if it exists as a string or an array', () => {
                 res.locals.options.fields = {
                     'field-name-1': {
                         legend: {
@@ -1089,7 +1095,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation for legend if a field value isn\'t provided', function () {
+            it('uses locales translation for legend if a field value isn\'t provided', () => {
                 req.translate = sinon.stub().withArgs('fields.field-name.legend').returns('Field legend');
                 res.locals.options.fields = {
                     'field-name': {}
@@ -1101,7 +1107,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('uses locales translation for hint if a field value isn\'t provided', function () {
+            it('uses locales translation for hint if a field value isn\'t provided', () => {
                 req.translate = sinon.stub().withArgs('fields.field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {}
@@ -1113,7 +1119,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('doesn\'t add a hint if the hint doesn\'t exist in locales', function () {
+            it('doesn\'t add a hint if the hint doesn\'t exist in locales', () => {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
@@ -1124,8 +1130,8 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            describe('multiple options selected', function () {
-                beforeEach(function () {
+            describe('multiple options selected', () => {
+                beforeEach(() => {
                     res.locals.options.fields = {
                         'field-name': {
                             options: [{
@@ -1142,7 +1148,7 @@ describe('Template Mixins', function () {
                     };
                 });
 
-                it('marks foo and bar as selected', function () {
+                it('marks foo and bar as selected', () => {
                     res.locals.values = {
                         'field-name': ['foo', 'bar']
                     };
@@ -1154,7 +1160,7 @@ describe('Template Mixins', function () {
                     }), 'value').should.be.eql(['foo', 'bar']);
                 });
 
-                it('marks foo, bar and baz as selected', function () {
+                it('marks foo, bar and baz as selected', () => {
                     res.locals.values = {
                         'field-name': ['foo', 'bar', 'baz']
                     };
@@ -1166,7 +1172,7 @@ describe('Template Mixins', function () {
                     }), 'value').should.be.eql(['foo', 'bar', 'baz']);
                 });
 
-                it('marks foo and baz as selected', function () {
+                it('marks foo and baz as selected', () => {
                     res.locals.values = {
                         'field-name': ['foo', 'baz']
                     };
@@ -1178,7 +1184,7 @@ describe('Template Mixins', function () {
                     }), 'value').should.be.eql(['foo', 'baz']);
                 });
 
-                it('marks bar as selected', function () {
+                it('marks bar as selected', () => {
                     res.locals.values = {
                         'field-name': ['bar']
                     };
@@ -1193,22 +1199,22 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('select', function () {
+        describe('select', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 middleware(req, res, next);
                 res.locals['select'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 middleware(req, res, next);
                 res.locals['select']().should.be.a('function');
             });
 
-            it('defaults `labelClassName` to "form-label"', function () {
+            it('defaults `labelClassName` to "form-label"', () => {
                 res.locals.options.fields = {
                     'field-name': {}
                 };
@@ -1219,7 +1225,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('overrides `labelClassName` when set in field options', function () {
+            it('overrides `labelClassName` when set in field options', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         labelClassName: 'visuallyhidden'
@@ -1232,7 +1238,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets all classes of `labelClassName` option', function () {
+            it('sets all classes of `labelClassName` option', () => {
                 res.locals.options.fields = {
                     'field-name': {
                         labelClassName: ['abc', 'def']
@@ -1245,7 +1251,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('includes a hint if it is defined in the locales', function () {
+            it('includes a hint if it is defined in the locales', () => {
                 req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
@@ -1258,7 +1264,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('includes a hint if it is defined in translation', function () {
+            it('includes a hint if it is defined in translation', () => {
                 req.translate = sinon.stub().withArgs('field-name.hint').returns('Field hint');
                 res.locals.options.fields = {
                     'field-name': {
@@ -1272,7 +1278,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('does not include a hint if it is not defined in translation', function () {
+            it('does not include a hint if it is not defined in translation', () => {
                 req.translate = sinon.stub().withArgs('field-name.hint').returns(null);
                 res.locals.options.fields = {
                     'field-name': {
@@ -1286,7 +1292,7 @@ describe('Template Mixins', function () {
                 }));
             });
 
-            it('sets labels to an empty string for translations that are returned as `undefined`', function () {
+            it('sets labels to an empty string for translations that are returned as `undefined`', () => {
                 req.translate = sinon.stub().returns(undefined);
                 res.locals.options.fields = {
                     'field-name': {
@@ -1311,10 +1317,10 @@ describe('Template Mixins', function () {
 
     });
 
-    describe('without stubbed Hogan', function () {
+    describe('without stubbed Hogan', () => {
 
-        it('looks up variables within the field key', function () {
-            res.locals.foo= 'bar';
+        it('looks up variables within the field key', () => {
+            res.locals.foo = 'bar';
             res.locals.options.fields = {
                 'bar-field-name': {}
             };
@@ -1322,201 +1328,201 @@ describe('Template Mixins', function () {
             res.locals['input-text']().call(res.locals, '{{foo}}-field-name').should.contain('id="bar-field-name"');
         });
 
-        describe('date', function () {
+        describe('date', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 res.locals['date'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 res.locals['date']().should.be.a('function');
             });
 
-            it('formats a date', function () {
+            it('formats a date', () => {
                 res.locals['date']().call(res.locals, '2015-03-26').should.equal('26 March 2015');
             });
 
-            it('applys a date format if specified', function () {
+            it('applys a date format if specified', () => {
                 res.locals['date']().call(res.locals, '2015-03|MMMM YYYY').should.equal('March 2015');
             });
 
         });
 
-        describe('time', function () {
+        describe('time', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 res.locals['time'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 res.locals['time']().should.be.a('function');
             });
 
-            it('changes 12:00am to midnight', function () {
+            it('changes 12:00am to midnight', () => {
                 res.locals['time']().call(res.locals, '26 March 2015 12:00am').should.equal('26 March 2015 midnight');
             });
 
-            it('changes 12:00pm to midday', function () {
+            it('changes 12:00pm to midday', () => {
                 res.locals['time']().call(res.locals, '26 March 2015 12:00pm').should.equal('26 March 2015 midday');
             });
 
-            it('changes leading 12:00am to Midnight', function () {
+            it('changes leading 12:00am to Midnight', () => {
                 res.locals['time']().call(res.locals, '12:00am 26 March 2015').should.equal('Midnight 26 March 2015');
             });
 
-            it('changes leading 12:00pm to Midday', function () {
+            it('changes leading 12:00pm to Midday', () => {
                 res.locals['time']().call(res.locals, '12:00pm 26 March 2015').should.equal('Midday 26 March 2015');
             });
 
-            it('should pass through other times', function () {
+            it('should pass through other times', () => {
                 res.locals['time']().call(res.locals, '6:30am 26 March 2015').should.equal('6:30am 26 March 2015');
             });
         });
 
-        describe('uppercase', function () {
-            beforeEach(function () {
+        describe('uppercase', () => {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 res.locals['uppercase'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 res.locals['uppercase']().should.be.a('function');
             });
 
-            it('changes text to uppercase', function () {
+            it('changes text to uppercase', () => {
                 res.locals['uppercase']().call(res.locals, 'abcdEFG').should.equal('ABCDEFG');
             });
 
-            it('returns an empty string if no text given', function () {
+            it('returns an empty string if no text given', () => {
                 res.locals['uppercase']().call(res.locals).should.equal('');
             });
         });
 
-        describe('lowercase', function () {
-            beforeEach(function () {
+        describe('lowercase', () => {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 res.locals['lowercase'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 res.locals['lowercase']().should.be.a('function');
             });
 
-            it('changes text to lowercase', function () {
+            it('changes text to lowercase', () => {
                 res.locals['lowercase']().call(res.locals, 'abcdEFG').should.equal('abcdefg');
             });
 
-            it('returns an empty string if no text given', function () {
+            it('returns an empty string if no text given', () => {
                 res.locals['lowercase']().call(res.locals).should.equal('');
             });
         });
 
-        describe('currency', function () {
-            beforeEach(function () {
+        describe('currency', () => {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 res.locals['currency'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 res.locals['currency']().should.be.a('function');
             });
 
-            it('formats whole numbers with no decimal places', function () {
+            it('formats whole numbers with no decimal places', () => {
                 res.locals['currency']().call(res.locals, '3.00').should.equal('£3');
             });
 
-            it('formats 3.50 to two decimal places', function () {
+            it('formats 3.50 to two decimal places', () => {
                 res.locals['currency']().call(res.locals, '3.50').should.equal('£3.50');
             });
 
-            it('formats and rounds 3.567 to two decimal places', function () {
+            it('formats and rounds 3.567 to two decimal places', () => {
                 res.locals['currency']().call(res.locals, '3.567').should.equal('£3.57');
             });
 
-            it('formats 4.5678 to two decimal places from a local variable', function () {
+            it('formats 4.5678 to two decimal places from a local variable', () => {
                 res.locals.value = 4.5678;
                 res.locals['currency']().call(res.locals, '{{value}}').should.equal('£4.57');
             });
 
-            it('returns non float text as is', function () {
+            it('returns non float text as is', () => {
                 res.locals['currency']().call(res.locals, 'test').should.equal('test');
             });
 
-            it('returns non float template text as is', function () {
+            it('returns non float template text as is', () => {
                 res.locals.value = 'test';
                 res.locals['currency']().call(res.locals, '{{value}}').should.equal('test');
             });
 
-            it('returns an empty string if no text given', function () {
+            it('returns an empty string if no text given', () => {
                 res.locals['currency']().call(res.locals).should.equal('');
             });
         });
 
-        describe('hyphenate', function () {
+        describe('hyphenate', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('adds a function to res.locals', function () {
+            it('adds a function to res.locals', () => {
                 res.locals['hyphenate'].should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 res.locals['hyphenate']().should.be.a('function');
             });
 
-            it('hyphenates a string with a single whitespace character', function () {
+            it('hyphenates a string with a single whitespace character', () => {
                 res.locals['hyphenate']().call(res.locals, 'apple blackberry').should.equal('apple-blackberry');
             });
 
-            it('hyphenates a string with multiple whitespace characters', function () {
+            it('hyphenates a string with multiple whitespace characters', () => {
                 res.locals['hyphenate']().call(res.locals, 'apple  blackberry   cherry').should.equal('apple-blackberry-cherry');
             });
 
         });
 
-        describe('url', function () {
+        describe('url', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('prepends the baseUrl to relative paths', function () {
+            it('prepends the baseUrl to relative paths', () => {
                 req.baseUrl = '/base';
                 res.locals.url().call(res.locals, './path').should.equal('/base/path');
                 res.locals.url().call(res.locals, 'path').should.equal('/base/path');
             });
 
-            it('returns path if baseUrl is not set', function () {
+            it('returns path if baseUrl is not set', () => {
                 req.baseUrl = undefined;
                 res.locals.url().call(res.locals, 'path').should.equal('path');
                 res.locals.url().call(res.locals, './path').should.equal('./path');
             });
 
-            it('does not prepend the baseUrl to absolute paths', function () {
+            it('does not prepend the baseUrl to absolute paths', () => {
                 req.baseUrl = '/base';
                 res.locals.url().call(res.locals, '/path').should.equal('/path');
             });
 
-            it('supports urls defined in template placeholders', function () {
+            it('supports urls defined in template placeholders', () => {
                 req.baseUrl = '/base';
                 res.locals.href = './link';
                 res.locals.url().call(res.locals, '{{href}}').should.equal('/base/link');
@@ -1524,32 +1530,32 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('qs', function () {
-            beforeEach(function () {
+        describe('qs', () => {
+            beforeEach(() => {
                 middleware(req, res, next);
             });
 
-            it('appends the passed query to the url query string', function () {
+            it('appends the passed query to the url query string', () => {
                 req.query = { a: 'b' };
                 res.locals.qs().call(res.locals, 'c=d').should.equal('?a=b&c=d');
             });
         });
 
-        describe('renderField', function () {
+        describe('renderField', () => {
 
             var inputTextStub;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware(req, res, next);
                 inputTextStub = sinon.stub();
                 sinon.stub(res.locals, 'input-text').returns(inputTextStub);
             });
 
-            afterEach(function () {
+            afterEach(() => {
                 res.locals['input-text'].restore();
             });
 
-            it('returns null if disableRender is set to true', function () {
+            it('returns null if disableRender is set to true', () => {
                 var field = {
                     key: 'my-field',
                     mixin: 'input-text',
@@ -1558,7 +1564,7 @@ describe('Template Mixins', function () {
                 expect(res.locals.renderField().call(field)).to.be.equal(null);
             });
 
-            it('returns the field\'s html if defined', function () {
+            it('returns the field\'s html if defined', () => {
                 var html = '<div>Prerendered HTML</div>';
                 var field = {
                     key: 'date-field',
@@ -1567,7 +1573,7 @@ describe('Template Mixins', function () {
                 res.locals.renderField().call(field).should.be.equal(html);
             });
 
-            it('looks up a mixin from res.locals and calls it', function () {
+            it('looks up a mixin from res.locals and calls it', () => {
                 var field = {
                     key: 'my-field',
                     mixin: 'input-text'
@@ -1577,7 +1583,7 @@ describe('Template Mixins', function () {
                     .and.calledWith('my-field');
             });
 
-            it('uses the field from the fields config if a key is passed', function () {
+            it('uses the field from the fields config if a key is passed', () => {
                 var options = {
                     fields: [
                         { key: 'some-field' }
@@ -1588,7 +1594,7 @@ describe('Template Mixins', function () {
                     .and.calledWith('some-field');
             });
 
-            it('uses the field from res.locals if a key is passed and no `fields` exist in local scope', function () {
+            it('uses the field from res.locals if a key is passed and no `fields` exist in local scope', () => {
                 res.locals.fields = [
                     { key: 'some-field' }
                 ];
@@ -1597,7 +1603,7 @@ describe('Template Mixins', function () {
                     .and.calledWith('some-field');
             });
 
-            it('defaults to input-text if mixin omitted', function () {
+            it('defaults to input-text if mixin omitted', () => {
                 var field = {
                     key: 'my-field'
                 };
@@ -1606,32 +1612,32 @@ describe('Template Mixins', function () {
                     .and.calledWith('my-field');
             });
 
-            it('throws an error if an invalid mixin is provided', function () {
+            it('throws an error if an invalid mixin is provided', () => {
                 var field = {
                     key: 'my-field',
                     mixin: 'invalid'
                 };
-                expect(function () {
+                expect(() => {
                     res.locals.renderField().call(field);
                 }).to.throw();
             });
 
-            it('throws an error if called with an undefined field', function () {
+            it('throws an error if called with an undefined field', () => {
                 var options = {
                     fields: [
                         { key: 'some-field' }
                     ]
                 };
-                expect(function () {
+                expect(() => {
                     res.locals.renderField().call(options, 'not-a-field');
                 }).to.throw();
             });
 
         });
 
-        describe('Multiple lambdas', function () {
+        describe('Multiple lambdas', () => {
 
-            it('recursively runs lambdas wrapped in other lambdas correctly', function () {
+            it('recursively runs lambdas wrapped in other lambdas correctly', () => {
                 middleware(req, res, next);
                 res.locals.value = '2016-01-01T00:00:00.000Z';
                 var result = res.locals['uppercase']().call(res.locals,
@@ -1643,44 +1649,43 @@ describe('Template Mixins', function () {
 
     });
 
-    describe('child templates', function () {
-        var render,
-            renderChild,
-            fields,
-            options;
+    describe('child templates', () => {
 
-        beforeEach(function () {
-            render = sinon.stub();
+        let renderChild;
+        let fields;
+        let options;
+
+        beforeEach(() => {
             sinon.stub(Hogan, 'compile').returns({
                 render: render
             });
         });
 
-        afterEach(function () {
+        afterEach(() => {
             Hogan.compile.restore();
         });
 
-        describe('radio-group renderChild', function () {
+        describe('radio-group renderChild', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware = mixins();
                 middleware(req, res, next);
                 res.locals['radio-group']().call(res.locals, 'field-name');
                 renderChild = render.lastCall.args[0].renderChild;
             });
 
-            it('is a function', function () {
+            it('is a function', () => {
                 renderChild.should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 renderChild().should.be.a('function');
             });
 
-            describe('called with child', function () {
+            describe('called with child', () => {
 
-                beforeEach(function () {
-                    options = [ {} ];
+                beforeEach(() => {
+                    options = [{}];
                     fields = {
                         'field-name': {
                             options: options
@@ -1690,7 +1695,7 @@ describe('Template Mixins', function () {
                     renderChild = renderChild();
                 });
 
-                it('accepts an HTML template string', function () {
+                it('accepts an HTML template string', () => {
                     Hogan.compile.restore();
                     options[0] = {
                         child: '<div>{{key}}</div>',
@@ -1702,7 +1707,7 @@ describe('Template Mixins', function () {
                     });
                 });
 
-                it('can lookup partial templates', function () {
+                it('can lookup partial templates', () => {
                     Hogan.compile.restore();
                     var partialPath = path.resolve(__dirname, './test-partial.html').replace('.html', '');
                     res.locals.partials = {
@@ -1718,7 +1723,7 @@ describe('Template Mixins', function () {
                     });
                 });
 
-                it('renders raw html in a panel if specified', function () {
+                it('renders raw html in a panel if specified', () => {
                     Hogan.compile.restore();
                     options[0] = {
                         child: 'html',
@@ -1739,7 +1744,7 @@ describe('Template Mixins', function () {
                     });
                 });
 
-                it('accepts a template mixin and renders it in a panel', function () {
+                it('accepts a template mixin and renders it in a panel', () => {
                     Hogan.compile.restore();
                     options[0] = {
                         value: true,
@@ -1762,7 +1767,7 @@ describe('Template Mixins', function () {
                     });
                 });
 
-                it('accepts a custom partial', function () {
+                it('accepts a custom partial', () => {
                     Hogan.compile.restore();
                     res.locals.partials = {
                         'partials-custom-partial': 'partials/custom-partial'
@@ -1784,26 +1789,26 @@ describe('Template Mixins', function () {
 
         });
 
-        describe('checkbox renderChild', function () {
+        describe('checkbox renderChild', () => {
 
-            beforeEach(function () {
+            beforeEach(() => {
                 middleware = mixins({ 'field-name': {} });
                 middleware(req, res, next);
                 res.locals['checkbox']().call(res.locals, 'field-name');
                 renderChild = render.lastCall.args[0].renderChild;
             });
 
-            it('is a function', function () {
+            it('is a function', () => {
                 renderChild.should.be.a('function');
             });
 
-            it('returns a function', function () {
+            it('returns a function', () => {
                 renderChild().should.be.a('function');
             });
 
-            describe('called with child', function () {
+            describe('called with child', () => {
 
-                beforeEach(function () {
+                beforeEach(() => {
                     options = {};
                     fields = {
                         'field-name': options,
@@ -1812,7 +1817,7 @@ describe('Template Mixins', function () {
                     renderChild = renderChild();
                 });
 
-                it('accepts an HTML template string', function () {
+                it('accepts an HTML template string', () => {
                     Hogan.compile.restore();
                     options.child = '<div>{{key}}</div>';
                     options.key = 'value';
@@ -1822,7 +1827,7 @@ describe('Template Mixins', function () {
                     });
                 });
 
-                it('accepts a template mixin and renders it in a panel', function () {
+                it('accepts a template mixin and renders it in a panel', () => {
                     Hogan.compile.restore();
                     options.child = 'input-text';
                     options.toggle = 'child-field-name';
@@ -1840,7 +1845,7 @@ describe('Template Mixins', function () {
                     });
                 });
 
-                it('accepts a custom partial', function () {
+                it('accepts a custom partial', () => {
                     Hogan.compile.restore();
                     res.locals.partials = {
                         'partials-custom-partial': 'partials/custom-partial'

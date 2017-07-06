@@ -1,10 +1,8 @@
-{
-    "env": {
-        "node": true,
-        "mocha": true
-    },
-    "globals": {
-        "sinon": true,
-        "expect": true
-    }
-}
+extends:
+- "../.eslintrc"
+- "homeoffice/config/testing"
+
+rules:
+  space-before-function-paren: 0
+  dot-notation: 0
+  max-len: 0
