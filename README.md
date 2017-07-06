@@ -1,10 +1,10 @@
-# passports-template-mixins
+# hof-template-mixins
 A middleware that exposes a series of Mustache mixins on `res.locals` to ease usage of forms, translations, and some other things.
 
 ## Installation
 
 ```javascript
-npm install [--save] hmpo-template-mixins;
+npm install [--save] hof-template-mixins;
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ npm install [--save] hmpo-template-mixins;
 var express = require('express');
 
 var i18n = require('i18n-future');
-var mixins = require('hmpo-template-mixins');
+var mixins = require('hof-template-mixins');
 
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '/views'));
