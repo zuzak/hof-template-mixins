@@ -1656,6 +1656,7 @@ describe('Template Mixins', () => {
         let options;
 
         beforeEach(() => {
+            render = sinon.stub();
             sinon.stub(Hogan, 'compile').returns({
                 render: render
             });
