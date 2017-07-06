@@ -1,5 +1,5 @@
 var path = require('path');
-var mixins = require('../lib/template-mixins');
+var mixins = require('..');
 var _ = require('underscore');
 var Hogan = require('hogan.js');
 var fs = require('fs');
@@ -29,9 +29,8 @@ describe('Template Mixins', function () {
         mixins().length.should.equal(3);
     });
 
-    it('calls next', function () {
-        mixins()(req, res, next);
-        next.should.have.been.calledOnce;
+    it('calls next', function (done) {
+        mixins()(req, res, done);
     });
 
     describe('with stubbed Hogan', function () {
