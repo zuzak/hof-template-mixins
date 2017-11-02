@@ -256,6 +256,40 @@ describe('Template Mixins', () => {
         }));
       });
 
+      it('sets `formGroupClassName` to "form-group" by default', () => {
+        middleware(req, res, next);
+        res.locals['input-text']().call(res.locals, 'field-name');
+        render.should.have.been.calledWith(sinon.match({
+            formGroupClassName: 'form-group'
+        }));
+      });
+
+      it('overrides `formGroupClassName` when set in field options', () => {
+        res.locals.options.fields = {
+            'field-name': {
+                formGroupClassName: 'visuallyhidden'
+            }
+        };
+        middleware(req, res, next);
+        res.locals['input-text']().call(res.locals, 'field-name');
+        render.should.have.been.calledWith(sinon.match({
+            formGroupClassName: 'visuallyhidden'
+        }));
+      });
+
+      it('sets all classes of `formGroupClassName` option', () => {
+        res.locals.options.fields = {
+            'field-name': {
+                formGroupClassName: ['abc', 'def']
+            }
+        };
+        middleware(req, res, next);
+        res.locals['input-text']().call(res.locals, 'field-name');
+        render.should.have.been.calledWith(sinon.match({
+            formGroupClassName: 'abc def'
+        }));
+      });
+
       it('sets additional element attributes', () => {
         res.locals.options.fields = {
           'field-name': {
